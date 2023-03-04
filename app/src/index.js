@@ -5,7 +5,7 @@ const LocalSession = require('telegraf-session-local')
 const dotenv = require('dotenv');
 dotenv.config();
 
-const { chatgptConversation }  = require('./chatgpt.js');
+const { chatgptConversation } = require('./chatgpt.js');
 
 // Load environment variables
 const telegramBotToken = process.env.TELEGRAM_BOT_TOKEN;
@@ -19,12 +19,12 @@ const bot = new Telegraf(telegramBotToken);
 // Set up local session middleware to store user data
 const sessionPath = './sessions/session.json';
 const session = new LocalSession();
-//bot.use((new LocalSession({ database: sessionPath })).middleware())
+bot.use((new LocalSession({ database: sessionPath })).middleware())
 
 // Enable command menu
 const commands = [
   { command: 'start', description: 'Start the bot' },
-  { command: 'newchat', description: 'Startnew chat' },  
+  //{ command: 'newchat', description: 'Startnew chat' },  
   //{ command: 'chats', description: 'Show chats list' },
   //{ command: 'prompts', description: 'Chose special prompt' },  
   //{ command: 'useinternet_once', description: 'Use internet once for next mesage' },  
@@ -37,21 +37,37 @@ bot.telegram.setMyCommands(commands);
 
 // Start command
 bot.start((ctx) => {
-  ctx.reply('👋 Welcome to VedaVany Bot.');
+  ctx.reply('👋 Welcome to VedaVany.');
+  // Clear user session data
+  ctx.session = null;
+  session.dialog = JSON.stringify([]);
 });
 
 
 // Listen for incoming text messages
 bot.on('text', async (ctx) => {
   try {
-    console.log('📩 Incoming message:', ctx.message.text);
-
+    var message = ctx.message.text;
+    var dialog = JSON.parse(session.dialog);
+    console.log('📩 Incoming message:', message);
+    console.log('🤖 Dialog:', dialog);
     // Send the "typing" action to the chat
     await ctx.replyWithChatAction('typing');
 
     // Call the chatGPT API to generate a response
-    const response = await chatgptConversation(ctx.message.text); 
+    const response = await chatgptConversation(message, dialog);
     console.log('🤖 Response:', response);
+
+    var qa = [
+      { "role": "user", "content": message },
+      { "role": "assistant", "content": response }
+    ];
+    console.log('🤖 qa:', qa);
+
+    dialog=dialog.concat(qa);
+
+    console.log('🤖 dialog:', dialog);
+    session.dialog=JSON.stringify(dialog);
 
     // Send the response back to the user
     await ctx.reply(response);
