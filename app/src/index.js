@@ -24,7 +24,7 @@ bot.use((new LocalSession({ database: sessionPath })).middleware())
 // Enable command menu
 const commands = [
   { command: 'start', description: 'Start the bot' },
-  //{ command: 'newchat', description: 'Startnew chat' },  
+  { command: 'newchat', description: 'Startnew chat' },  
   //{ command: 'chats', description: 'Show chats list' },
   //{ command: 'prompts', description: 'Chose special prompt' },  
   //{ command: 'useinternet_once', description: 'Use internet once for next mesage' },  
@@ -34,13 +34,25 @@ const commands = [
 ];
 bot.telegram.setMyCommands(commands);
 
+async function newChat(ctx)
+{
+  await ctx.reply('👉👨‍💻💬 Just type something.');
 
-// Start command
-bot.start((ctx) => {
-  ctx.reply('👋 Welcome to VedaVany.');
   // Clear user session data
   ctx.session = null;
-  session.dialog = JSON.stringify([]);
+  ctx.session.dialog = JSON.stringify([]);
+}
+
+// Start command
+bot.start(async (ctx) => {
+  await ctx.reply('👋 Welcome to VedaVany.');
+  await newChat(ctx);
+});
+
+
+
+bot.command('newchat', async (ctx) => {
+  await newChat(ctx);
 });
 
 
@@ -48,7 +60,7 @@ bot.start((ctx) => {
 bot.on('text', async (ctx) => {
   try {
     var message = ctx.message.text;
-    var dialog = JSON.parse(session.dialog);
+    var dialog = JSON.parse(ctx.session.dialog);
     console.log('📩 Incoming message:', message);
     console.log('🤖 Dialog:', dialog);
     // Send the "typing" action to the chat
@@ -67,7 +79,7 @@ bot.on('text', async (ctx) => {
     dialog=dialog.concat(qa);
 
     console.log('🤖 dialog:', dialog);
-    session.dialog=JSON.stringify(dialog);
+    ctx.session.dialog=JSON.stringify(dialog);
 
     // Send the response back to the user
     await ctx.reply(response);
