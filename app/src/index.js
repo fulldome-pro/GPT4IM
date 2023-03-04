@@ -7,6 +7,7 @@ dotenv.config();
 
 const { chatgptConversation }  = require('./chatgpt.js');
 
+// Load environment variables
 const telegramBotToken = process.env.TELEGRAM_BOT_TOKEN;
 if (!telegramBotToken) {
   throw new Error('TELEGRAM_BOT_TOKEN not found');
@@ -15,13 +16,10 @@ if (!telegramBotToken) {
 // Create a new Telegraf instance using the API token provided by BotFather
 const bot = new Telegraf(telegramBotToken);
 
+// Set up local session middleware to store user data
 const sessionPath = './sessions/session.json';
 const session = new LocalSession();
-
-
-// Use session middleware to store user data
-bot.use((new LocalSession({ database: sessionPath })).middleware())
-
+//bot.use((new LocalSession({ database: sessionPath })).middleware())
 
 // Enable command menu
 const commands = [
@@ -37,29 +35,34 @@ const commands = [
 bot.telegram.setMyCommands(commands);
 
 
+// Start command
+bot.start((ctx) => {
+  ctx.reply('👋 Welcome to VedaVany Bot.');
+});
+
+
 // Listen for incoming text messages
 bot.on('text', async (ctx) => {
   try {
-
-    console.log(ctx.message.text);
+    console.log('📩 Incoming message:', ctx.message.text);
 
     // Send the "typing" action to the chat
     await ctx.replyWithChatAction('typing');
+
+    // Call the chatGPT API to generate a response
     const response = await chatgptConversation(ctx.message.text); 
-    console.log(response);
+    console.log('🤖 Response:', response);
 
     // Send the response back to the user
     await ctx.reply(response);
+
   } catch (err) {
     // Handle errors gracefully
-    console.error(err);
+    console.error('❌ Error:', err);
     await ctx.reply('Oops! Something went wrong. Please try again later.');
   }
 });
 
 // Start polling for incoming messages
 bot.launch();
-console.log('🚀 Bot running');
-
-
-
+console.log('🚀 VadaVany bot is running');
