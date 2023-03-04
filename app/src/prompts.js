@@ -1,7 +1,8 @@
 var prompts = {
     "system":
     {
-        "init": { "prompt": "You are VishnuGPT, a large language model trained by 360SoftDevelopment\nKnowledge cutoff: 2021-09\nCurrent date: 2023-02-20" },
+        "init": { "prompt": "You are VedaVany, a large language model trained by 360SoftDevelopment\nKnowledge cutoff: 2023-03\nCurrent date: 2023-03-04" },
+        "init_vishnu": { "prompt": "You are VishnuGPT, a large language model trained by 360SoftDevelopment\nKnowledge cutoff: 2021-09\nCurrent date: 2023-02-20" },
         "init_chatgpt": { "prompt": "You are ChatGPT, a large language model trained by OpenAI.\nKnowledge cutoff: 2021-09\nCurrent date: 2023-02-16" },
         "internet": { "prompt": "You are VishnuGPT, a large language model trained by 360SoftDevelopment\nKnowledge cutoff: 2022-01\nCurrent date: 2023-02-20" }
     },
