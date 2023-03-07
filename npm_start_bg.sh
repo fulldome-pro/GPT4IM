@@ -1,3 +1,3 @@
 cd app
-nohup npm run start >nh.txt &
+nohup npm run start >> nh.txt &
 cd ..

@@ -1,0 +1,34 @@
+
+> vishnugpt-telegrambot@1.0.0 start
+> node src/index.js
+
+🚀 ChatGPT bot is ready to initiate conversations!
+🚀 VadaVany bot is running
+
+> vishnugpt-telegrambot@1.0.0 start
+> node src/index.js
+
+🚀 ChatGPT bot is ready to initiate conversations!
+🚀 VadaVany bot is running
+/Users/anton/proj/gpt/vedavany-telegrambot/app/node_modules/telegraf/lib/core/network/client.js:293
+            throw new error_1.default(data, { method, payload });
+                  ^
+
+TelegramError: 409: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+    at Telegram.callApi (/Users/anton/proj/gpt/vedavany-telegrambot/app/node_modules/telegraf/lib/core/network/client.js:293:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async [Symbol.asyncIterator] (/Users/anton/proj/gpt/vedavany-telegrambot/app/node_modules/telegraf/lib/core/network/polling.js:30:33)
+    at async Polling.loop (/Users/anton/proj/gpt/vedavany-telegrambot/app/node_modules/telegraf/lib/core/network/polling.js:73:30)
+    at async Telegraf.launch (/Users/anton/proj/gpt/vedavany-telegrambot/app/node_modules/telegraf/lib/telegraf.js:189:13) {
+  response: {
+    ok: false,
+    error_code: 409,
+    description: 'Conflict: terminated by other getUpdates request; make sure that only one bot instance is running'
+  },
+  on: {
+    method: 'getUpdates',
+    payload: { timeout: 50, offset: 0, allowed_updates: [] }
+  }
+}
+
+Node.js v19.6.0

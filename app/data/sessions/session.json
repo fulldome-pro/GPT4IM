@@ -1,0 +1,66 @@
+{
+  "sessions": [
+    {
+      "id": "238560779:238560779",
+      "data": {
+        "dialog": [
+          {
+            "role": "user",
+            "content": "Hi"
+          },
+          {
+            "role": "assistant",
+            "content": "Jaya Srila Guru Maharaj! Please accept my humble obeisances. How may I assist you today?"
+          },
+          {
+            "role": "user",
+            "content": "Hi"
+          },
+          {
+            "role": "assistant",
+            "content": "My dear friend, please accept my greetings. Is there anything specific you would like to ask or discuss?"
+          },
+          {
+            "role": "user",
+            "content": "Hi"
+          },
+          {
+            "role": "assistant",
+            "content": "Hare Krishna! Welcome. How can I assist you today?"
+          },
+          {
+            "role": "user",
+            "content": "Hi"
+          },
+          {
+            "role": "assistant",
+            "content": "Please let me know how may I assist you today?"
+          },
+          {
+            "role": "user",
+            "content": "Hi"
+          },
+          {
+            "role": "assistant",
+            "content": "Hare Krishna! How may I assist you today?"
+          }
+        ],
+        "dialogId": 430168037265,
+        "messages": {},
+        "feedback": {
+          "278": "like",
+          "282": "like",
+          "290": "good"
+        },
+        "lastMessageId": 290
+      }
+    },
+    {
+      "id": "586917860:586917860",
+      "data": {
+        "dialog": [],
+        "dialogId": 45163608766
+      }
+    }
+  ]
+}

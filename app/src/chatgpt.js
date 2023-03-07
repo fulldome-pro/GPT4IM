@@ -24,7 +24,9 @@ async function chatgptConversation(message, dialog) {
         { "role": "user", "content": message }
     ];
 
-    var messages = beginMessage.concat(dialog,endMessage);
+    if (typeof dialog === 'undefined') dialog = [];
+
+    var messages = beginMessage.concat(dialog, endMessage);
 
     const data = {
         "model": "gpt-3.5-turbo",
