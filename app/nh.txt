@@ -32,3 +32,27 @@ TelegramError: 409: Conflict: terminated by other getUpdates request; make sure 
 }
 
 Node.js v19.6.0
+
+> vishnugpt-telegrambot@1.0.0 start
+> node src/index.js
+
+🚀 ChatGPT bot is ready to initiate conversations!
+🚀 VadaVany bot is running
+
+/Users/anton/proj/gpt/vedavany-telegrambot/app/node_modules/node-fetch/lib/index.js:1505
+			reject(new FetchError(`request to ${request.url} failed, reason: ${err.message}`, 'system', err));
+			       ^
+FetchError: request to https://api.telegram.org/bot5997449350:[REDACTED]/setMyCommands failed, reason: connect ETIMEDOUT 2001:67c:4e8:f004::9:443
+    at ClientRequest.<anonymous> (/Users/anton/proj/gpt/vedavany-telegrambot/app/node_modules/node-fetch/lib/index.js:1505:11)
+    at ClientRequest.emit (node:events:512:28)
+    at TLSSocket.socketErrorListener (node:_http_client:496:9)
+    at TLSSocket.emit (node:events:512:28)
+    at emitErrorNT (node:internal/streams/destroy:151:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:116:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  type: 'system',
+  errno: 'ETIMEDOUT',
+  code: 'ETIMEDOUT'
+}
+
+Node.js v19.6.0

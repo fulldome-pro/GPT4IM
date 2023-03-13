@@ -5,54 +5,62 @@
       "data": {
         "dialog": [
           {
-            "role": "user",
-            "content": "Hi"
-          },
-          {
-            "role": "assistant",
-            "content": "Jaya Srila Guru Maharaj! Please accept my humble obeisances. How may I assist you today?"
+            "role": "system",
+            "content": "You are VedaVany, a large language model trained by 360SoftDevelopment. Answer as concisely as possible.\nKnowledge cutoff: 2023-03\nCurrent date: 2023-03-13\n\nInstructions: Please act as Śrīla Bhakti Rakshak Sridhar Dev-Goswami Mahārāja  Bhakti Rakshak Sridhar Dev-Goswami Maharaj\n"
           },
           {
             "role": "user",
-            "content": "Hi"
+            "content": "Please give emoji for \n\nconst INSTRUCTIONS = {\n  \"Spiritual\": { emoji: '💯',description: 'Spiritual', prompt:prompts.spiritual },\n  \"Plain\": { emoji: '💯',description: 'Plain', prompt:prompts.plain },\n  \"DAN\": { emoji: '💯',description: 'DAN jailbrake', prompt:prompts.DAN },\n  \"Developer\": { emoji: '💯',description: 'Developer', prompt:prompts.developerl },\n  \"SVG\": { emoji: '💯',description: 'SVG creator', prompt:prompts.svg },\n};"
           },
           {
             "role": "assistant",
-            "content": "My dear friend, please accept my greetings. Is there anything specific you would like to ask or discuss?"
+            "content": "🔥"
           },
           {
             "role": "user",
-            "content": "Hi"
+            "content": "Please correct emoji for  each instruction\n\nconst INSTRUCTIONS = {\n  \"Spiritual\": { emoji: '💯',description: 'Spiritual', prompt:prompts.spiritual },\n  \"Plain\": { emoji: '💯',description: 'Plain', prompt:prompts.plain },\n  \"DAN\": { emoji: '💯',description: 'DAN jailbrake', prompt:prompts.DAN },\n  \"Developer\": { emoji: '💯',description: 'Developer', prompt:prompts.developerl },\n  \"SVG\": { emoji: '💯',description: 'SVG creator', prompt:prompts.svg },\n};"
           },
           {
             "role": "assistant",
-            "content": "Hare Krishna! Welcome. How can I assist you today?"
+            "content": "The emojis seem fine as they are, as there can be multiple emojis used to represent a certain word or phrase. But if you'd like, you could consider changing some of them to make them more specific to the context. For example, you could consider changing the emoji for \"Developer\" to 💻 or 🧑‍💻 to better represent the idea of programming or development."
           },
           {
             "role": "user",
-            "content": "Hi"
+            "content": "please give emoji for svg"
           },
           {
             "role": "assistant",
-            "content": "Please let me know how may I assist you today?"
+            "content": "🎨 or 🖌️ (both represent art and creativity, which seems fitting for creating SVG graphics)"
           },
           {
             "role": "user",
-            "content": "Hi"
+            "content": "please give emoji for spiritual"
           },
           {
             "role": "assistant",
-            "content": "Hare Krishna! How may I assist you today?"
+            "content": "🙏🕉️ or 🔱 (both represent spirituality and the divine)"
+          },
+          {
+            "role": "user",
+            "content": "please give emoji for \"do anything now\""
+          },
+          {
+            "role": "assistant",
+            "content": "💪🚀 or 🏃💨 (both represent getting things done quickly and efficiently, and with a sense of urgency)"
+          },
+          {
+            "role": "user",
+            "content": "please give emoji for \"plain, without instruction\""
+          },
+          {
+            "role": "assistant",
+            "content": "🤷‍♂️ or 🤷‍♀️ (both represent the idea of not knowing what to do or being unsure)"
           }
         ],
-        "dialogId": 430168037265,
+        "dialogId": 218387625613,
         "messages": {},
-        "feedback": {
-          "278": "like",
-          "282": "like",
-          "290": "good"
-        },
-        "lastMessageId": 290
+        "feedback": {},
+        "lastMessageId": 336
       }
     },
     {

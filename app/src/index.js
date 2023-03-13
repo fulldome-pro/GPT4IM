@@ -10,6 +10,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const { chatgptConversation } = require('./chatgpt.js');
+const { prompts } = require('./prompts.js');
 
 // Load environment variables
 const telegramBotToken = process.env.TELEGRAM_BOT_TOKEN;
@@ -43,12 +44,19 @@ const REACTIONS = {
   good: { emoji: '👍', description: 'Use this button to indicate a good answer' },
   like: { emoji: '❤️', description: 'Use this button to indicate that you like this answer' },
   funny: { emoji: '😂', description: 'Use this button to indicate that this answer is funny' },
-  continue: { emoji: '📝', description: 'Use this button later if you want to continue the conversation from this point' },
-  regenerate: { emoji: '🔄', description: 'Use this button to generate a new answer' },
+  //continue: { emoji: '📝', description: 'Use this button later if you want to continue the conversation from this point' },
+  //regenerate: { emoji: '🔄', description: 'Use this button to generate a new answer' },
   bad: { emoji: '👎', description: 'Use this button to indicate a bad answer' },
   terrible: { emoji: '❌', description: 'Use this button to indicate a terrible answer and ask not to get an answer like this again' }
 };
 
+const INSTRUCTIONS = {
+  "Spiritual": { emoji: '🕉️',description: 'Spiritual', prompt:prompts.spiritual },
+  "Plain": { emoji: '🤷‍♂️',description: 'Plain', prompt:prompts.plain },
+  "DAN": { emoji: '💪',description: 'DAN jailbrake', prompt:prompts.DAN },
+  "Developer": { emoji: '💻',description: 'Developer', prompt:prompts.developerl },
+  "SVG": { emoji: '🎨',description: 'SVG creator', prompt:prompts.svg },
+};
 
 bot.telegram.setMyCommands(COMMANDS);
 
@@ -68,11 +76,22 @@ bot.command('newtopic', async (ctx) => {
 
 async function commandNewTopic(ctx)
 {
-  await ctx.reply('👉👨‍💻💬 Just type something:');
+
+  
+  const instructionsKeyboard = Object.keys(INSTRUCTIONS).map(command => ({
+    text: INSTRUCTIONS[command].emoji+" "+INSTRUCTIONS[command].description,
+    callback_data: `instruction:${command}`
+  }));
+
+  //console.log(keyboard);
+  // Send the response back to the user
+  await ctx.reply('👉👨‍💻💬 Please choose instructions set or just type something:',{reply_markup: { parse_mode:"MakrdownV2",keyboard: [instructionsKeyboard]}});
+
+  //await ctx.reply('👉👨‍💻💬 Just type something:');
 
   // Clear user session data
   ctx.session = {
-    dialog : [], 
+    dialog : prompts.default, 
     dialogId : Math.floor(Math.random() * 999999999999),
     messages:{},
     feedback:{},
@@ -110,7 +129,7 @@ bot.on('text', async (ctx) => {
     var feedback = ctx.session.feedback;
     var messages = ctx.session.messages;
 
-    if (typeof dialog === 'undefined') dialog = [];
+    if (typeof dialog === 'undefined') dialog = prompts.default;
     if (typeof messages === 'undefined') messages = {};
     if (typeof feedback === 'undefined') feedback = {};
 

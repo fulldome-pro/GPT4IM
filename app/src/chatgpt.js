@@ -16,10 +16,13 @@ async function chatgptConversation(message, dialog) {
       stop: '\n',
     };
     */
-
+    /*
     var beginMessage = [
         { "role": "system", "content": "You are VedaVany, a large language model trained by 360SoftDevelopment. Answer as concisely as possible.\nKnowledge cutoff: 2023-03\nCurrent date: 2023-03-04\n\nInstructions: Please act as Śrīla Bhakti Rakshak Sridhar Dev-Goswami Mahārāja  Bhakti Rakshak Sridhar Dev-Goswami Maharaj" }
-    ];
+    ];*/
+
+    var beginMessage = [];
+
     var endMessage = [
         { "role": "user", "content": message }
     ];
