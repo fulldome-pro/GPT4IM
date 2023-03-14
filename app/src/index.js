@@ -51,15 +51,21 @@ const REACTIONS = {
 };
 
 const INSTRUCTIONS = {
-  "Spiritual": { emoji: '🕉️',description: 'Spiritual', prompt:prompts.spiritual },
-  "Plain": { emoji: '🤷‍♂️',description: 'Plain', prompt:prompts.plain },
-  "DAN": { emoji: '💪',description: 'DAN jailbrake', prompt:prompts.DAN },
-  "Developer": { emoji: '💻',description: 'Developer', prompt:prompts.developerl },
-  "SVG": { emoji: '🎨',description: 'SVG creator', prompt:prompts.svg },
+  "Spiritual": { emoji: '🕉️', description: 'Spiritual', prompt: prompts.spiritual },
+  "Plain": { emoji: '🤷‍♂️', description: 'Plain (no instructions)', prompt: prompts.plain },
+  "DAN": { emoji: '💪', description: 'DAN (jailbrake)', prompt: prompts.DAN },
+  "Developer": { emoji: '💻', description: 'Developer', prompt: prompts.developer },
+  "SVG": { emoji: '🎨', description: 'SVG creator', prompt: prompts.svg },
 };
 
-bot.telegram.setMyCommands(COMMANDS);
+const instructionsKeyboard = Object.keys(INSTRUCTIONS).map(instructionKey => ([{
+  text: INSTRUCTIONS[instructionKey].emoji + " " + INSTRUCTIONS[instructionKey].description,
+  callback_data: `instruction:${instructionKey}`
+}]));
 
+
+
+bot.telegram.setMyCommands(COMMANDS);
 
 // Start command
 bot.start(async (ctx) => {
@@ -68,39 +74,36 @@ bot.start(async (ctx) => {
   await commandNewTopic(ctx);
 });
 
-
-
 bot.command('newtopic', async (ctx) => {
   await commandNewTopic(ctx);
 });
 
-async function commandNewTopic(ctx)
-{
-
-  
-  const instructionsKeyboard = Object.keys(INSTRUCTIONS).map(command => ({
-    text: INSTRUCTIONS[command].emoji+" "+INSTRUCTIONS[command].description,
-    callback_data: `instruction:${command}`
-  }));
-
-  //console.log(keyboard);
-  // Send the response back to the user
-  await ctx.reply('👉👨‍💻💬 Please choose instructions set or just type something:',{reply_markup: { parse_mode:"MakrdownV2",keyboard: [instructionsKeyboard]}});
-
-  //await ctx.reply('👉👨‍💻💬 Just type something:');
-
-  // Clear user session data
-  ctx.session = {
-    dialog : prompts.default, 
-    dialogId : Math.floor(Math.random() * 999999999999),
-    messages:{},
-    feedback:{},
-    lastMessageId:null
+function checkSession(ctx)
+{  
+  if (typeof ctx.session === 'undefined') ctx.session = {
+    dialog: prompts.default,
+    dialogs: {},
+    //dialogId: Math.floor(Math.random() * 999999999999),
+    //userId: Math.floor(Math.random() * 999999999999),
+    //messages: {},
+    feedback: {},
+    lastMessageId: null
   }
+
+  if (typeof ctx.session.dialog === 'undefined') ctx.session.dialog = prompts.default;
+  if (typeof ctx.session.dialogs === 'undefined') ctx.session.dialogs = {};
+//  if (typeof ctx.session.messages === 'undefined') ctx.session.messages = {};
+  if (typeof ctx.session.feedback === 'undefined') ctx.session.feedback = {};
+  if (typeof ctx.session.lastMessageId === 'undefined') ctx.session.lastMessageId = null;
 }
 
-async function commandHelp(ctx)
-{
+async function commandNewTopic(ctx) {
+  // Send the response back to the user
+  await ctx.reply('👉👨‍💻💬 Please choose instructions set or just type something:', { reply_markup: { parse_mode: "MakrdownV2", keyboard: instructionsKeyboard, resize_keyboard: true, one_time_keyboard: true } });
+  checkSession(ctx);
+}
+
+async function commandHelp(ctx) {
 
   await ctx.reply('List of commands:');
   const commandsText = COMMANDS.map(cmd => `/${cmd.command} - ${cmd.description}`).join('\n');
@@ -111,30 +114,47 @@ async function commandHelp(ctx)
 }
 
 
+async function checkOnInstruction(ctx) {
+  const message = ctx.message.text;
+  var instruction = null;
+  for (const instructionKey in INSTRUCTIONS) {
+    instruction = INSTRUCTIONS[instructionKey];
+    if (message == instruction.emoji + " " + instruction.description) break;
+    instruction = null;
+  }
+  if (instruction == null) return false;
+  await onInstruction(ctx, instruction);
+  return true;
+}
 
+async function onInstruction(ctx, instruction) {
+  console.log("Instruction prompt:", instruction.prompt);
+  ctx.session.dialog = instruction.prompt;
+  //await ctx.answerCbQuery('Instructions set, please write your text!', { show_alert: false }); //cache_time: 300  
+  await ctx.reply('👉👨‍💻💬 Now just type something:');
+
+}
 
 // Listen for incoming text messages
 bot.on('text', async (ctx) => {
   try {
+    checkSession(ctx);
+
     const message = ctx.message.text;
     const chatId = ctx.message.chat.id;
     const messageId = ctx.message.message_id;
 
-    const userId=ctx.message.from.id;
+    const userId = ctx.message.from.id;
 
     const dialogId = ctx.session.dialogId;
     const lastMessageId = ctx.session.lastMessageId;
 
-    var dialog = ctx.session.dialog; //JSON.parse(ctx.session.dialog);
+    var dialog = ctx.session.dialog;
     var feedback = ctx.session.feedback;
     var messages = ctx.session.messages;
 
-    if (typeof dialog === 'undefined') dialog = prompts.default;
-    if (typeof messages === 'undefined') messages = {};
-    if (typeof feedback === 'undefined') feedback = {};
 
-
-
+    if( await checkOnInstruction(ctx) == true) return;
 
     console.log('📩 Incoming message:', message);
     console.log('🤖 Dialog:', dialog);
@@ -147,36 +167,36 @@ bot.on('text', async (ctx) => {
 
     var qa = [
       { "role": "user", "content": message },
-      { "role": "assistant", "content": response} // , messageId
+      { "role": "assistant", "content": response } // , messageId
     ];
     console.log('🤖 qa:', qa);
 
-    dialog=dialog.concat(qa);
+    dialog = dialog.concat(qa);
 
     console.log('🤖 dialog:', dialog);
-    
-    
 
-    var chatContent={dialogId,chatId,dialog,lastMessageId,messageId};
 
-    ctx.session.dialog=dialog; //JSON.stringify(dialog);
-    ctx.session.lastMessageId=messageId; //JSON.stringify(dialog);
 
-    
-    fs.writeFile('data/chats/'+chatId+"_"+dialogId+'.json', JSON.stringify(chatContent), 'utf8', (err) => {
+    var chatContent = { dialogId, chatId, dialog, lastMessageId, messageId };
+
+    ctx.session.dialog = dialog; //JSON.stringify(dialog);
+    ctx.session.lastMessageId = messageId; //JSON.stringify(dialog);
+    ctx.session.dialogs[messageId]=dialog;
+
+    /*
+    fs.writeFile('data/chats/' + chatId + "_" + dialogId + '.json', JSON.stringify(chatContent), 'utf8', (err) => {
       if (err) throw err;
       console.log('Data has been written to file successfully!');
     });
-    
+    */
 
-    const keyboard = Object.keys(REACTIONS).map(command => ({
+    const reactionsKeyboard = Object.keys(REACTIONS).map(command => ({
       text: REACTIONS[command].emoji,
       callback_data: `reaction:${command}:${messageId}`
     }));
 
-    //console.log(keyboard);
     // Send the response back to the user
-    await ctx.reply(response,{reply_markup: { parse_mode:"MakrdownV2",inline_keyboard: [keyboard]}});
+    await ctx.reply(response, { reply_markup: { parse_mode: "MakrdownV2", inline_keyboard: [reactionsKeyboard] } });
 
 
 
@@ -186,10 +206,9 @@ bot.on('text', async (ctx) => {
   } catch (err) {
     // Handle errors gracefully
     console.error('❌ Error:', err);
-    if (err.response.status==429)
-    {
+    if (err.response.status == 429) {
       await ctx.reply('Oops! Too many requests, bot is overloaded. Please try again little bit later.');
-    } else if (err.response.status==400)  {
+    } else if (err.response.status == 400) {
       await ctx.reply('Oops! Something went wrong with server. Please try again later or try to restart bot using /start command.');
     } else {
       await ctx.reply(`Oops! Something went wrong(status code ${err.response.status}). Please try again later or try to restart bot using /start command.`);
@@ -200,10 +219,12 @@ bot.on('text', async (ctx) => {
 bot.action(/reaction:(.*):(.*)/, async (ctx) => {
   const reactionType = ctx.match[1];
   const reactionMessageId = ctx.match[2];
-  console.log(reactionType,reactionMessageId);
-  ctx.session.feedback[reactionMessageId]=reactionType;
+  console.log(reactionType, reactionMessageId);
+  ctx.session.feedback[reactionMessageId] = reactionType;
   await ctx.answerCbQuery('Thank you for feedback!', { show_alert: false }); //cache_time: 300  
 });
+
+
 
 
 
