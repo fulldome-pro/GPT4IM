@@ -101,6 +101,7 @@ async function commandNewTopic(ctx) {
   // Send the response back to the user
   await ctx.reply('👉👨‍💻💬 Please choose instructions set or just type something:', { reply_markup: { parse_mode: "MakrdownV2", keyboard: instructionsKeyboard, resize_keyboard: true, one_time_keyboard: true } });
   checkSession(ctx);
+  ctx.session.dialog=prompts.default;
 }
 
 async function commandHelp(ctx) {
