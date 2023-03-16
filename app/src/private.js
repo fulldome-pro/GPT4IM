@@ -9,8 +9,20 @@ async function onBotStartPrivate(ctx) {
 
 async function onBotCommandNewTopicPrivate(ctx) {
     console.log(ctx);
-    await ctx.reply('👉👨‍💻💬 Please choose instructions set or just type something:', { reply_markup: { parse_mode: "MakrdownV2", keyboard: instructionsKeyboard, resize_keyboard: true, one_time_keyboard: true } });
+    const topic=ctx.message.text.substring(ctx.message.text.indexOf(" ") + 1);
+    console.log(topic);
+
     ctx.session.dialog = prompts.default;
+    if((topic == "/newtopic")||(topic == "/chatgpt"))
+    {
+        await ctx.reply('👉👨‍💻💬 Please choose instructions set or just type something:', { reply_markup: { parse_mode: "MakrdownV2", keyboard: instructionsKeyboard, resize_keyboard: true, one_time_keyboard: true } });
+    } else {
+        //var q = { "role": "user", "content": topic };
+        //ctx.session.dialog = ctx.session.dialog.concat([q]);
+        ctx.message.text=topic;
+        onBotTextPrivate(ctx);
+    }
+
 }
 
 async function onBotCommandHelpPrivate(ctx) {
@@ -18,7 +30,9 @@ async function onBotCommandHelpPrivate(ctx) {
     await ctx.reply(commandsText);
     await ctx.reply(`💬 Any time you can write text. 👨‍💻 And bot will give response. 👉 You can give feedback(it will help us to improve) after response, using this buttons:`);
     await ctx.reply(reactionsText);
-  }
+}
+
+
 
 async function onBotTextPrivate(ctx) {
     console.log(ctx.session);
