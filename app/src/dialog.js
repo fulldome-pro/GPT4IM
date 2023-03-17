@@ -84,7 +84,7 @@ async function makeDialog(ctx) {
     var responseMessageId=newMessage.message_id;
 
 
-    //TODO:Поддержка длинных 4096+ ответов
+    //TODO:Поддержка длинных 4096+ симсолов ответов (в telegram ограничение на длину сообщение 4096 символов, chatGpt вылает больше, 4096 токенов, это под 7-8тысяч символов)
     /* старая версия работающая до ответов в realtime
     responseArray=splitText(response);
     //await newMessage.edit_text(responseArray[0]);
