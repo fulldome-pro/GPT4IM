@@ -18,7 +18,21 @@ function getCurrentDateFormatted() {
     return formattedDate;
 }
 
+function splitText(text) {
+    const length = text.length;
+    if (length <= 4096) return [text];
+    
+    var middle = Math.floor(length/2);
+    var how = Math.floor((4096*2-length)/2);
+    var cut = text.lastIndexOf('\n', middle-how+1) + 1;
+    if (!((cut<4096)&&(length-cut<4096))) cut=middle;
+    
+    const firstBlock = text.slice(0, cut);
+    const lastBlock = text.slice(cut, length);
+    return [firstBlock, lastBlock];
+  }
 
 module.exports = {
-    getCurrentDateFormatted
+    getCurrentDateFormatted,
+    splitText
 };

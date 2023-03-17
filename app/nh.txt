@@ -56,3 +56,11 @@ FetchError: request to https://api.telegram.org/bot5997449350:[REDACTED]/setMyCo
 }
 
 Node.js v19.6.0
+
+> vishnugpt-telegrambot@1.0.0 start
+> node src/index.js
+
+2023-03-17
+🚀 ChatGPT bot is ready to initiate conversations!
+🚀 VadaVany bot is running
+2023-03-17

@@ -29,6 +29,7 @@ const INSTRUCTIONS = {
     "Plain": { emoji: '🤷‍♂️', description: 'Plain (no instructions)', prompt: prompts.plain },
     "DAN": { emoji: '💪', description: 'DAN (jailbrake)', prompt: prompts.DAN },
     "Developer": { emoji: '💻', description: 'Developer', prompt: prompts.developer },
+    "Data Scientist": { emoji: '🔬', description: 'Data Scientist', prompt: prompts.scientist },
     "SVG": { emoji: '🎨', description: 'SVG creator', prompt: prompts.svg },
 };
 

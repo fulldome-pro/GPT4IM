@@ -7,7 +7,7 @@ const fs = require('fs');
 const dotenv = require('dotenv');
 dotenv.config();
 
-const { COMMANDS, REACTIONS, INSTRUCTIONS, instructionsKeyboard,commandsText,reactionsText } = require('./const.js');
+const { COMMANDS, REACTIONS, INSTRUCTIONS, instructionsKeyboard,commandsText,reactionsText } = require('./const/const.js');
 
 const { 
   onBotStartPrivate,
@@ -21,6 +21,9 @@ const {
     onBotCommandHelpGroup,
     onBotTextGroup} = require('./group.js');
 
+const {onBotCommandNewTopicCommon,checkSession} = require('./common.js');
+
+const { makeDialog } = require('./dialog.js');
 
 // Load environment variables
 const telegramBotToken = process.env.TELEGRAM_BOT_TOKEN;
@@ -42,7 +45,7 @@ bot.telegram.setMyCommands(COMMANDS);
 
 // Start command
 bot.start(async (ctx) => {
-
+  console.log('🚀 /start command');
   if (ctx.chat.type === 'private') {
     await onBotStartPrivate(ctx)
   } else {
@@ -51,14 +54,17 @@ bot.start(async (ctx) => {
 });
 
 bot.command('newtopic', async (ctx) => {
+  console.log('💬 /newtopic command');
   await onBotCommandNewTopic(ctx);
 });
 
 bot.command('chatgpt', async (ctx) => {
+  console.log('💬 /chatgpt command');
   await onBotCommandNewTopic(ctx);
 });
 
 bot.command('help', async (ctx) => {
+  console.log('🆘 /chatgpt command');
   if (ctx.chat.type === 'private') {
     await onBotCommandHelpPrivate(ctx);
   } else {
@@ -66,30 +72,12 @@ bot.command('help', async (ctx) => {
   }
 });
 
-function checkSession(ctx) {
-  if (typeof ctx.session === 'undefined') ctx.session = {
-    dialog: prompts.default,
-    dialogs: {},
-    feedback: {},
-    lastMessageId: null
-  };
 
-  if (typeof ctx.session.dialog === 'undefined') ctx.session.dialog = prompts.default;
-  if (typeof ctx.session.dialogs === 'undefined') ctx.session.dialogs = {};
-  if (typeof ctx.session.feedback === 'undefined') ctx.session.feedback = {};
-  if (typeof ctx.session.lastMessageId === 'undefined') ctx.session.lastMessageId = null;
-  if (typeof ctx.session.responseMessageId === 'undefined') ctx.session.responseMessageId = null;
-  if (typeof ctx.session.responses === 'undefined') ctx.session.responses = {};
-}
 
 async function onBotCommandNewTopic(ctx) {
   //console.log(ctx,ctx.message.text);
   await checkSession(ctx);
-  if (ctx.chat.type === 'private') {
-    await onBotCommandNewTopicPrivate(ctx);
-  } else {
-    await onBotCommandNewTopicGroup(ctx);
-  }
+  await onBotCommandNewTopicCommon(ctx);
 }
 
 async function checkOnInstruction(ctx) {
@@ -106,6 +94,7 @@ async function checkOnInstruction(ctx) {
 }
 
 async function onInstruction(ctx, instruction) {
+  console.log('👨‍💻 Select instruction command');
   console.log("Instruction prompt:", instruction.prompt);
   ctx.session.dialog = instruction.prompt;
   //await ctx.answerCbQuery('Instructions set, please write your text!', { show_alert: false }); //cache_time: 300  
@@ -119,9 +108,11 @@ bot.on('text', async (ctx) => {
     if (await checkOnInstruction(ctx) == true) return;
     await checkSession(ctx);
     if (ctx.chat.type === 'private') {
-      await onBotTextPrivate(ctx)
+      console.log('📝 text received (private)');
+      await makeDialog(ctx);
     } else {
-      await onBotTextGroup(ctx)
+      console.log('📝 text received (group)');
+      await onBotTextGroup(ctx);
     }
   } catch (err) {
     // Handle errors gracefully
@@ -153,3 +144,7 @@ bot.catch((err, ctx) => {
 // Start polling for incoming messages
 bot.launch();
 console.log('🚀 VadaVany bot is running');
+
+
+
+require('./const/show');
