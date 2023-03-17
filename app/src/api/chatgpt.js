@@ -17,25 +17,36 @@ const axios = require('axios'); // Importing the axios package
 //https://github.com/openai/openai-node/issues/18#issuecomment-1369996933
 
 
-/*
-const openAiCompletion = async (messages, onText) => {
-    try {
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+
+
+async function chatgptConversationMessagesFetch2(messages, onText) {
+    //try {
+
+        const url = `https://api.openai.com/v1/chat/completions`;
+        const headers = {
+            Authorization: `Bearer ${authorization}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        };
+
+        const data = {
+            "model": MODEL,
+            "messages": messages,
+            stream: true,
+        };
+
+        const res = await fetch(url, {
             method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${OPENAI_TOKEN}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                messages,
-                model: "gpt-3.5-turbo",
-                max_tokens: 2048,
-                stream: true
-            })
+            headers: headers,
+            body: JSON.stringify(data)
         });
 
-        const decoder = new TextDecoder('utf8');
-        const reader = response.body.getReader();
+        // Create a reader for the response body
+        const reader = res.body.getReader();
+        // Create a decoder for UTF-8 encoded text
+        const decoder = new TextDecoder("utf-8");
+        let result = "";
+        // Function to read chunks of the response body
 
         let fullText = ''
         let lastFire = 0
@@ -43,7 +54,7 @@ const openAiCompletion = async (messages, onText) => {
         async function read() {
             const { value, done } = await reader.read();
 
-            if (done) return onText(fullText)
+            if (done) return /*await*/ onText(fullText)
 
             const delta = decoder.decode(value).match(/"delta":\s*({.*?"content":\s*".*?"})/)?.[1]
 
@@ -56,9 +67,9 @@ const openAiCompletion = async (messages, onText) => {
                 if (/[\p{P}\p{S}]/u.test(content)) {
                     const now = Date.now();
 
-                    if (now - lastFire > 500) {
+                    if (now - lastFire > 3000) {
                         lastFire = now
-                        onText(fullText)
+                        /*await*/ onText(fullText)
                     }
                 }
             }
@@ -69,98 +80,10 @@ const openAiCompletion = async (messages, onText) => {
 
         await read()
 
-        return fullText
-    } catch (error) {
-        return error;
-    }
-}
-*/
-
-async function chatgptConversationMessagesFetch2(messages, onText) {
-    const url = `https://api.openai.com/v1/chat/completions`;
-    const headers = {
-        Authorization: `Bearer ${authorization}`,
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-    };
-
-    const data = {
-        "model": MODEL,
-        "messages": messages,
-        stream: true,
-    };
-
-    const res = await fetch(url, {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify(data)});
-
-    console.log(res);
-    // Create a reader for the response body
-    const reader = res.body.getReader();
-    // Create a decoder for UTF-8 encoded text
-    const decoder = new TextDecoder("utf-8");
-    let result = "";
-    // Function to read chunks of the response body
-
-    /*
-    const readChunk = async () => {
-        return reader.read().then(({ value, done }) => {
-            if (!done) {
-                //console.log(value);
-                const dataString = decoder.decode(value);
-                console.log(dataString);
-                const data = JSON.parse(dataString);
-                console.log(data);
-
-                if (data.error) {
-                    console.error("Error while generating content: " + data.message);
-                } else {
-                    result = data.streamHead ? data.text : result + data.text;
-                    return readChunk();
-                }
-            } else {
-                console.log("done");
-            }
-        });
-    };
-
-    await readChunk();
-    */
-    let fullText = ''
-    let lastFire = 0
-
-    async function read() {
-        const { value, done } = await reader.read();
-
-        if (done) return onText(fullText)
-
-        const delta = decoder.decode(value).match(/"delta":\s*({.*?"content":\s*".*?"})/)?.[1]
-
-        if (delta) {
-            const content = JSON.parse(delta).content
-
-            fullText += content
-
-            //Detects punctuation, if yes, fires onText once per .5 sec
-            if (/[\p{P}\p{S}]/u.test(content)) {
-                const now = Date.now();
-
-                if (now - lastFire > 100) {
-                    lastFire = now
-                    onText(fullText)
-                }
-            }
-        }
-
-        await read()
-
-    }
-
-    await read()
-
-    return fullText;
-    return "ok";
+        return fullText;
+    //} catch (error) {
+    //    return "Oops. Error. Sorry";
+    //}
 }
 
 
@@ -483,7 +406,7 @@ async function chatgptConversation(message, dialog, onText) {
     if (typeof dialog === 'undefined') dialog = [];
 
     var messages = beginMessage.concat(dialog, endMessage);
-    return await chatgptConversationMessagesFetch2(messages,onText);
+    return await chatgptConversationMessagesFetch2(messages, onText);
     //return await chatgptConversationMessages(messages);
 }
 
