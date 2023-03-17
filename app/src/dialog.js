@@ -58,6 +58,8 @@ async function makeDialog(ctx) {
 
         try {
             if (textBefore != text) {
+                //TODO:сделать по правильному, через async
+                //await
                 /*await*/ ctx.telegram.editMessageText(newMessage.chat.id, newMessage.message_id, null, text + "\n...", { reply_markup: { parse_mode: "MakrdownV2", inline_keyboard: [reactionsKeyboard] } });
                 /*await*/ ctx.replyWithChatAction('typing');
             }
