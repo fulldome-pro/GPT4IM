@@ -51,6 +51,8 @@ async function chatgptConversationMessagesFetch2(messages, onText) {
         let fullText = ''
         let lastFire = 0
 
+        var delay=3000; //in ms
+
         async function read() {
             const { value, done } = await reader.read();
 
@@ -67,7 +69,8 @@ async function chatgptConversationMessagesFetch2(messages, onText) {
                 if (/[\p{P}\p{S}]/u.test(content)) {
                     const now = Date.now();
 
-                    if (now - lastFire > 3000) {
+                    if (now - lastFire > delay) {
+                        delay=delay*1.5;
                         lastFire = now
                         /*await*/ onText(fullText)
                     }

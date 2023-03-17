@@ -53,15 +53,15 @@ async function makeDialog(ctx) {
     console.log('🤖 Dialog:', dialog);
     var textBefore = "";
     // Call the chatGPT API to generate a response
-    const response = await chatgptConversation(message, dialog, /*async*/ (text) => {
+    const response = await chatgptConversation(message, dialog, async (text) => {
         console.log(text);
 
         try {
             if (textBefore != text) {
                 //TODO:сделать по правильному, через async
                 //await
-                /*await*/ ctx.telegram.editMessageText(newMessage.chat.id, newMessage.message_id, null, text + "\n...", { reply_markup: { parse_mode: "MakrdownV2", inline_keyboard: [reactionsKeyboard] } });
-                /*await*/ ctx.replyWithChatAction('typing');
+                await ctx.telegram.editMessageText(newMessage.chat.id, newMessage.message_id, null, text + "\n...", { reply_markup: { parse_mode: "MakrdownV2", inline_keyboard: [reactionsKeyboard] } });
+                //await ctx.replyWithChatAction('typing');
             }
         } catch (error) {
             console.log("Oops. Modify error.", error);
