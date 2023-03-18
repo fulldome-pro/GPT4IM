@@ -7,7 +7,7 @@ async function onBotCommandNewTopicCommon(ctx) {
     if (topic == "/start") topic = "/new";
 
     if ((topic == "/new@VedaVany2_bot") || (topic == "/newtopic@VedaVany2_bot") || (topic == "/chatgpt@VedaVany2_bot")) {
-        await ctx.reply('Usage: /newtopic What is life after life?', { reply_to_message_id: ctx.message.message_id });
+        await ctx.reply('Usage: /new What is life after life?', { reply_to_message_id: ctx.message.message_id });
         return;
     }
 

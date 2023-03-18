@@ -22,7 +22,7 @@ async function onBotTextGroup(ctx) {
     console.log(ctx);
     console.log(ctx.message.from);
     console.log(ctx.message.chat);
-    await ctx.reply("group");
+    //await ctx.reply("group");
 }
 
 
