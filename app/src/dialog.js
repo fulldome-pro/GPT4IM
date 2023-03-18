@@ -1,8 +1,10 @@
-const { COMMANDS, REACTIONS, INSTRUCTIONS, instructionsKeyboard, commandsText, reactionsText, prompts } = require('./const/const.js');
+const { COMMANDS, REACTIONS, INSTRUCTIONS, menuKeyboard, commandsText, reactionsText, prompts } = require('./const/const.js');
 const { chatgptConversation } = require('./api/chatgpt.js');
 
 const { getCurrentDateFormatted, splitText } = require('./helper');
 
+
+const markdownRegex = /(^|[^*_`])(?:\\*\\*|__|\\*|_)(.+?)(?:\\*\\*|__|\\*|_)([^*_`]|$)|(```)([\\s\\S]+?)(```)/gm;
 
 
 async function makeDialog(ctx) {
@@ -37,8 +39,9 @@ async function makeDialog(ctx) {
     }
 
     // Send the "typing" action to the chat
-    newMessage = await ctx.reply('...');
-    //newMessage = await ctx.reply('...',{ reply_markup:  {  parse_mode: "MakrdownV2", inline_keyboard: [reactionsKeyboard]  }});
+    //newMessage = await ctx.reply('...');
+    newMessage = await ctx.replyWithMarkdown('...');
+    //newMessage = await ctx.reply('...',{ reply_markup:  {  parse_mode: "MarkdownV2", inline_keyboard: [reactionsKeyboard]  }});
 
     const reactionsKeyboard = Object.keys(REACTIONS).map(command => ({
         text: REACTIONS[command].emoji,
@@ -46,7 +49,7 @@ async function makeDialog(ctx) {
     }));
 
 
-    await ctx.replyWithChatAction('typing');
+    //await ctx.replyWithChatAction('typing');
 
 
 
@@ -54,25 +57,39 @@ async function makeDialog(ctx) {
     var textBefore = "";
     // Call the chatGPT API to generate a response
     const response = await chatgptConversation(message, dialog, async (text) => {
-        console.log(text);
+        const myText = text + "\n...";
+        console.log(myText);
 
         try {
-            if (textBefore != text) {
+            if (textBefore != myText) {
                 //TODO:сделать по правильному, через async
                 //await
-                await ctx.telegram.editMessageText(newMessage.chat.id, newMessage.message_id, null, text + "\n...", { reply_markup: { parse_mode: "MakrdownV2", inline_keyboard: [reactionsKeyboard] } });
-                //await ctx.replyWithChatAction('typing');
+
+
+                if (markdownRegex.test(myText))
+                    await ctx.telegram.editMessageText(newMessage.chat.id, newMessage.message_id, null, myText, { parse_mode: 'Markdown', reply_markup: { inline_keyboard: [reactionsKeyboard] } });
+                else
+                    await ctx.telegram.editMessageText(newMessage.chat.id, newMessage.message_id, null, myText, { reply_markup: { inline_keyboard: [reactionsKeyboard] } });
             }
         } catch (error) {
             console.log("Oops. Modify error.", error);
         }
-        textBefore = text;
+        textBefore = myText;
 
+    }, async () => {
+        try {
+            await ctx.replyWithChatAction('typing');
+        } catch (error) {
+            console.log("Oops. Typing error.", error);
+        }
     });
 
-
-    await ctx.telegram.editMessageText(newMessage.chat.id, newMessage.message_id, null, response, { reply_markup: { parse_mode: "MakrdownV2", inline_keyboard: [reactionsKeyboard] } });
-
+    if (textBefore != response) {
+        if (markdownRegex.test(response))
+            await ctx.telegram.editMessageText(newMessage.chat.id, newMessage.message_id, null, response, { parse_mode: 'Markdown', reply_markup: { inline_keyboard: [reactionsKeyboard] } });
+        else
+            await ctx.telegram.editMessageText(newMessage.chat.id, newMessage.message_id, null, response, { reply_markup: { inline_keyboard: [reactionsKeyboard] } });
+    }
 
     await ctx.replyWithChatAction('cancel')
 

@@ -19,71 +19,107 @@ const axios = require('axios'); // Importing the axios package
 
 
 
-async function chatgptConversationMessagesFetch2(messages, onText) {
+async function chatgptConversationMessagesFetch2(messages, onText, onTyping) {
     //try {
 
-        const url = `https://api.openai.com/v1/chat/completions`;
-        const headers = {
-            Authorization: `Bearer ${authorization}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        };
+    const url = `https://api.openai.com/v1/chat/completions`;
+    const headers = {
+        Authorization: `Bearer ${authorization}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+    };
 
-        const data = {
-            "model": MODEL,
-            "messages": messages,
-            stream: true,
-        };
+    const data = {
+        "model": MODEL,
+        "messages": messages,
+        stream: true,
+    };
 
-        const res = await fetch(url, {
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify(data)
-        });
+    const res = await fetch(url, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(data)
+    });
 
-        // Create a reader for the response body
-        const reader = res.body.getReader();
-        // Create a decoder for UTF-8 encoded text
-        const decoder = new TextDecoder("utf-8");
-        let result = "";
-        // Function to read chunks of the response body
+    // Create a reader for the response body
+    const reader = res.body.getReader();
+    // Create a decoder for UTF-8 encoded text
+    const decoder = new TextDecoder("utf-8");
+    let result = "";
+    // Function to read chunks of the response body
 
-        let fullText = ''
-        let lastFire = 0
+    let fullText = ''
+    let lastFire = 0
+    let lastFireTyping = 0
 
-        var delay=3000; //in ms
+    var delay = 250; //in ms
+    var delayTyping = 5000; //in ms
 
-        async function read() {
-            const { value, done } = await reader.read();
+    var start = Date.now();
+    //async function read() {
 
-            if (done) return /*await*/ onText(fullText)
+    while (true) {
+        var { value, done } = await reader.read();
 
-            const delta = decoder.decode(value).match(/"delta":\s*({.*?"content":\s*".*?"})/)?.[1]
+        var decoded = /*await*/ decoder.decode(value);
+        console.log(decoded);
+        const delta = /*await*/ decoded.match(/"delta":\s*({.*?"content":\s*".*?"})/)?.[1]
 
-            if (delta) {
-                const content = JSON.parse(delta).content
+        if (delta) {
+            const content = /*await*/ JSON.parse(delta).content
 
-                fullText += content
+            fullText += content
+            //console.log("content:", content);
 
-                //Detects punctuation, if yes, fires onText once per .5 sec
-                if (/[\p{P}\p{S}]/u.test(content)) {
-                    const now = Date.now();
+            const punctuationRegex = /[\p{P}\p{S}]/gu;
+  
+            // Use regular expression to match spaces including line breaks.
+            const spacesRegex = /[\p{Z}\s]/gu;
+            
+            // Combine both regular expressions to match all punctuation, symbols, and spaces.
+            const regex = new RegExp(`${punctuationRegex.source}|${spacesRegex.source}`, 'gu');
 
-                    if (now - lastFire > delay) {
-                        delay=delay*1.5;
-                        lastFire = now
-                        /*await*/ onText(fullText)
-                    }
+
+            //Detects punctuation, if yes, fires onText once per .5 sec
+            if (regex.test(content)) {
+                const now = Date.now();
+
+                if ((now - start) > 2000) delay = 1000;
+                if ((now - start) > 5000) delay = 2000;
+                if ((now - start) > 10000) delay = 5000;
+
+                if (now - lastFire > delay) {
+                    //delay=delay*1.5;
+                    lastFire = now
+                    /*await*/ onText(fullText)
+                }
+                if (now - lastFireTyping > delayTyping) {
+                    //delay=delay*1.5;
+                    lastFireTyping = now;
+                    /*await*/ onTyping();
                 }
             }
-
-            await read()
-
         }
 
-        await read()
+        if (done) {
+            /*await*/ onText(fullText);
+            console.log("DONE", value, done);
+            //return value;
+            break;
+        }
 
-        return fullText;
+
+    }
+
+
+
+    //await read()
+
+    //}
+
+    //await read()
+
+    return fullText;
     //} catch (error) {
     //    return "Oops. Error. Sorry";
     //}
@@ -393,7 +429,7 @@ async function chatgptConversationMessagesFetch(messages) {
     return '';
 }
 
-async function chatgptConversation(message, dialog, onText) {
+async function chatgptConversation(message, dialog, onText, onTyping) {
 
     /*
     var beginMessage = [
@@ -409,7 +445,7 @@ async function chatgptConversation(message, dialog, onText) {
     if (typeof dialog === 'undefined') dialog = [];
 
     var messages = beginMessage.concat(dialog, endMessage);
-    return await chatgptConversationMessagesFetch2(messages, onText);
+    return await chatgptConversationMessagesFetch2(messages, onText, onTyping);
     //return await chatgptConversationMessages(messages);
 }
 

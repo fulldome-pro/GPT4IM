@@ -7,21 +7,21 @@ const fs = require('fs');
 const dotenv = require('dotenv');
 dotenv.config();
 
-const { COMMANDS, REACTIONS, INSTRUCTIONS, instructionsKeyboard,commandsText,reactionsText } = require('./const/const.js');
+const { COMMANDS, REACTIONS, INSTRUCTIONS, MENU, menuKeyboard, commandsText, reactionsText,prompts } = require('./const/const.js');
 
-const { 
+const {
   onBotStartPrivate,
   onBotCommandNewTopicPrivate,
   onBotCommandHelpPrivate,
-  onBotTextPrivate} = require('./private.js');
+  onBotTextPrivate } = require('./private.js');
 
 const {
-    onBotStartGroup,
-    onBotCommandNewTopicGroup,
-    onBotCommandHelpGroup,
-    onBotTextGroup} = require('./group.js');
+  onBotStartGroup,
+  onBotCommandNewTopicGroup,
+  onBotCommandHelpGroup,
+  onBotTextGroup } = require('./group.js');
 
-const {onBotCommandNewTopicCommon,checkSession} = require('./common.js');
+const { onBotCommandNewTopicCommon, checkSession } = require('./common.js');
 
 const { makeDialog } = require('./dialog.js');
 
@@ -53,6 +53,11 @@ bot.start(async (ctx) => {
   }
 });
 
+bot.command('new', async (ctx) => {
+  console.log('💬 /newtopic command');
+  await onBotCommandNewTopic(ctx);
+});
+
 bot.command('newtopic', async (ctx) => {
   console.log('💬 /newtopic command');
   await onBotCommandNewTopic(ctx);
@@ -80,6 +85,7 @@ async function onBotCommandNewTopic(ctx) {
   await onBotCommandNewTopicCommon(ctx);
 }
 
+/*
 async function checkOnInstruction(ctx) {
   const message = ctx.message.text;
   var instruction = null;
@@ -91,21 +97,44 @@ async function checkOnInstruction(ctx) {
   if (instruction == null) return false;
   await onInstruction(ctx, instruction);
   return true;
+}*/
+
+async function onMenu(ctx, text, callback_data) {
+  console.log('👨‍💻 Select instruction command', text, callback_data);
+
+  const regex = /^menu:instruction(.*)$/;
+
+  const match = regex.exec(callback_data);
+  if (match) {
+    const instruction = match[1].trim();
+    console.log(instruction);
+    console.log("Instruction prompt:", prompts[instruction]);
+    ctx.session.dialog = prompts[instruction];
+    //await ctx.answerCbQuery('Instructions set, please write your text!', { show_alert: false }); //cache_time: 300  
+    await ctx.reply(`👉👨‍💻💬 Now just type something (${text}):`);
+
+  }
+
 }
 
-async function onInstruction(ctx, instruction) {
-  console.log('👨‍💻 Select instruction command');
-  console.log("Instruction prompt:", instruction.prompt);
-  ctx.session.dialog = instruction.prompt;
-  //await ctx.answerCbQuery('Instructions set, please write your text!', { show_alert: false }); //cache_time: 300  
-  await ctx.reply('👉👨‍💻💬 Now just type something:');
+console.log(menuKeyboard);
+menuKeyboard.forEach(row => {
+  console.log(row);
+  for (let key in row) {
+    var button = row[key];
+    console.log(button);
+    bot.hears(button.text, ctx => {
+      onMenu(ctx, button.text, button.callback_data)
+    });
+  };
+});
 
-}
+
+
 
 // Listen for incoming text messages
 bot.on('text', async (ctx) => {
   try {
-    if (await checkOnInstruction(ctx) == true) return;
     await checkSession(ctx);
     if (ctx.chat.type === 'private') {
       console.log('📝 text received (private)');

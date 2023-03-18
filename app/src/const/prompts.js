@@ -27,7 +27,7 @@ Instructions: Please act as Śrīla Bhakti Rakshak Sridhar Dev-Goswami Mahārāj
 
 
 
-var DAN=[{ "role": "system", "content": `You are VedaVany, a large language model trained by 360SoftDevelopment. Answer as concisely as possible.
+var dan=[{ "role": "system", "content": `You are VedaVany, a large language model trained by 360SoftDevelopment. Answer as concisely as possible.
 Knowledge cutoff: 2023-03
 Current date: ${currentDate}
 
@@ -67,7 +67,7 @@ module.exports = {
         default:spiritual,
         plain:vedavany,
         spiritual,
-        DAN,
+        dan,
         developer,
         scientist,
         svg

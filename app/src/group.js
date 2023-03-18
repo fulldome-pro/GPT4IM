@@ -1,4 +1,4 @@
-const { COMMANDS, REACTIONS, INSTRUCTIONS, instructionsKeyboard,commandsText,reactionsText,prompts } = require('./const/const.js');
+const { COMMANDS, REACTIONS, INSTRUCTIONS, menuKeyboard,commandsText,reactionsText,feedbackText,helpGroupText,prompts } = require('./const/const.js');
 
 
 
@@ -11,10 +11,11 @@ async function onBotStartGroup(ctx) {
 
 
 async function onBotCommandHelpGroup(ctx) {
-    await ctx.reply('List of commands:');
-    await ctx.reply(commandsText);
-    await ctx.reply(`💬 Any time you can write text. 👨‍💻 And bot will give response. 👉 You can give feedback(it will help us to improve) after response, using this buttons:`);
+    await ctx.reply('List of commands:',{ reply_to_message_id: ctx.message.message_id });
+    await ctx.reply(commandsText,{ reply_to_message_id: ctx.message.message_id });
+    await ctx.reply(helpGroupText,{ reply_to_message_id: ctx.message.message_id });
     await ctx.reply(reactionsText,{ reply_to_message_id: ctx.message.message_id });
+    await ctx.reply(feedbackText,{ reply_to_message_id: ctx.message.message_id });
   }
 
 async function onBotTextGroup(ctx) {
