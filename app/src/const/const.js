@@ -77,7 +77,7 @@ function createKeyboard(menu) {
 //.oneTimeKeyboard(true);
 
 const menuKeyboard = createKeyboard(MENU);
-console.log(menuKeyboard);
+//console.log(menuKeyboard);
 
 const instructionsKeyboard = menuKeyboard;
 /*
