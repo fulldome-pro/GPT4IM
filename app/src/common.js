@@ -2,11 +2,20 @@ const { makeDialog } = require('./dialog.js');
 const { COMMANDS, REACTIONS, INSTRUCTIONS, menuKeyboard, commandsText, reactionsText, prompts } = require('./const/const.js');
 
 async function onBotCommandNewTopicCommon(ctx) {
+    /*TODO
+    /new
+    Text
+
+    Чтобы тоже отрабатывал
+    */
     var topic = ctx.message.text.substring(ctx.message.text.indexOf(" ") + 1);
 
     if (topic == "/start") topic = "/new";
 
-    if ((topic == "/new@VedaVany2_bot") || (topic == "/newtopic@VedaVany2_bot") || (topic == "/chatgpt@VedaVany2_bot")) {
+    
+
+
+    if ((topic == "/new@VedaVany2_bot") || (topic == "/newtopic@VedaVany2_bot") || (topic == "/chatgpt@VedaVany2_bot") || (topic == "/chatgpt@uz_chatGPT_bot")) {
         await ctx.reply('Usage: /new What is life after life?', { reply_to_message_id: ctx.message.message_id });
         return;
     }

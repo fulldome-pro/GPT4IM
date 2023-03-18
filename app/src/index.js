@@ -85,20 +85,6 @@ async function onBotCommandNewTopic(ctx) {
   await onBotCommandNewTopicCommon(ctx);
 }
 
-/*
-async function checkOnInstruction(ctx) {
-  const message = ctx.message.text;
-  var instruction = null;
-  for (const instructionKey in INSTRUCTIONS) {
-    instruction = INSTRUCTIONS[instructionKey];
-    if (message == instruction.emoji + " " + instruction.description) break;
-    instruction = null;
-  }
-  if (instruction == null) return false;
-  await onInstruction(ctx, instruction);
-  return true;
-}*/
-
 async function onMenu(ctx, text, callback_data) {
   console.log('👨‍💻 Select instruction command', text, callback_data);
 

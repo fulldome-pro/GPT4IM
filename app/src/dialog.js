@@ -57,8 +57,10 @@ async function makeDialog(ctx) {
     var textBefore = "";
     // Call the chatGPT API to generate a response
     const response = await chatgptConversation(message, dialog, async (text) => {
-        const myText = text + "\n...";
-        console.log(myText);
+        //TODO: Добавить Поддержка длинных 4096+ симсолов ответов 
+        var myText = (text + "\n...");
+        myText=myText.substring(0, 4095); //Не правильно, заглушка!
+        //console.log(myText);
 
         try {
             if (textBefore != myText) {
@@ -84,6 +86,8 @@ async function makeDialog(ctx) {
         }
     });
 
+    
+    response=response.substring(0, 4095); //Не правильно, заглушка!
     if (textBefore != response) {
         if (markdownRegex.test(response))
             await ctx.telegram.editMessageText(newMessage.chat.id, newMessage.message_id, null, response, { parse_mode: 'Markdown', reply_markup: { inline_keyboard: [reactionsKeyboard] } });
