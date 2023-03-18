@@ -8,10 +8,12 @@ async function onBotCommandNewTopicCommon(ctx) {
 
     Чтобы тоже отрабатывал
     */
-    var topic = ctx.message.text.substring(ctx.message.text.indexOf(" ") + 1);
-
+    //var topic = ctx.message.text.substring(ctx.message.text.indexOf(" ") + 1);
+    var topic = ctx.message.text.substring(ctx.message.text.search(/\s,\n+/) + 1);
+    //TODO: И снова тут что-то не работает
     if (topic == "/start") topic = "/new";
 
+    console.log("onBotCommandNewTopicCommon",ctx.message.text,";;;",topic)
     
 
 

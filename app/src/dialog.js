@@ -8,7 +8,7 @@ const markdownRegex = /(^|[^*_`])(?:\\*\\*|__|\\*|_)(.+?)(?:\\*\\*|__|\\*|_)([^*
 
 
 async function makeDialog(ctx) {
-    console.log(ctx.session);
+    //console.log(ctx.session);
     const message = ctx.message.text;
     const chatId = ctx.message.chat.id;
     const messageId = ctx.message.message_id;
@@ -40,7 +40,7 @@ async function makeDialog(ctx) {
 
     // Send the "typing" action to the chat
     //newMessage = await ctx.reply('...');
-    newMessage = await ctx.replyWithMarkdown('...');
+    newMessage = await ctx.replyWithMarkdown('⌛...');
     //newMessage = await ctx.reply('...',{ reply_markup:  {  parse_mode: "MarkdownV2", inline_keyboard: [reactionsKeyboard]  }});
 
     const reactionsKeyboard = Object.keys(REACTIONS).map(command => ({
@@ -56,38 +56,41 @@ async function makeDialog(ctx) {
     console.log('🤖 Dialog:', dialog);
     var textBefore = "";
     // Call the chatGPT API to generate a response
-    const response = await chatgptConversation(message, dialog, async (text) => {
-        //TODO: Добавить Поддержка длинных 4096+ симсолов ответов 
-        var myText = (text + "\n...");
-        myText=myText.substring(0, 4095); //Не правильно, заглушка!
-        //console.log(myText);
+    var response = await chatgptConversation(message, dialog, async () => {
+        await ctx.telegram.editMessageText(newMessage.chat.id, newMessage.message_id, null, "✍️...", { parse_mode: 'Markdown', reply_markup: { inline_keyboard: [reactionsKeyboard] } });
+    },
+        async (text) => {
+            //TODO: Добавить Поддержка длинных 4096+ симсолов ответов 
+            var myText = (text + "\n✍️...");
+            myText = myText.substring(0, 4095); //Не правильно, заглушка!
+            //console.log(myText);
 
-        try {
-            if (textBefore != myText) {
-                //TODO:сделать по правильному, через async
-                //await
+            try {
+                if (textBefore != myText) {
+                    //TODO:сделать по правильному, через async
+                    //await
 
 
-                if (markdownRegex.test(myText))
-                    await ctx.telegram.editMessageText(newMessage.chat.id, newMessage.message_id, null, myText, { parse_mode: 'Markdown', reply_markup: { inline_keyboard: [reactionsKeyboard] } });
-                else
-                    await ctx.telegram.editMessageText(newMessage.chat.id, newMessage.message_id, null, myText, { reply_markup: { inline_keyboard: [reactionsKeyboard] } });
+                    if (markdownRegex.test(myText))
+                        await ctx.telegram.editMessageText(newMessage.chat.id, newMessage.message_id, null, myText, { parse_mode: 'Markdown', reply_markup: { inline_keyboard: [reactionsKeyboard] } });
+                    else
+                        await ctx.telegram.editMessageText(newMessage.chat.id, newMessage.message_id, null, myText, { reply_markup: { inline_keyboard: [reactionsKeyboard] } });
+                }
+            } catch (error) {
+                console.log("Oops. Modify error.", error);
             }
-        } catch (error) {
-            console.log("Oops. Modify error.", error);
-        }
-        textBefore = myText;
+            textBefore = myText;
 
-    }, async () => {
-        try {
-            await ctx.replyWithChatAction('typing');
-        } catch (error) {
-            console.log("Oops. Typing error.", error);
-        }
-    });
+        }, async () => {
+            try {
+                await ctx.replyWithChatAction('typing');
+            } catch (error) {
+                console.log("Oops. Typing error.", error);
+            }
+        });
 
-    
-    response=response.substring(0, 4095); //Не правильно, заглушка!
+
+    response = response.substring(0, 4095); //Не правильно, заглушка!
     if (textBefore != response) {
         if (markdownRegex.test(response))
             await ctx.telegram.editMessageText(newMessage.chat.id, newMessage.message_id, null, response, { parse_mode: 'Markdown', reply_markup: { inline_keyboard: [reactionsKeyboard] } });

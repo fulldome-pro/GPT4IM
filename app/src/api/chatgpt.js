@@ -19,7 +19,7 @@ const axios = require('axios'); // Importing the axios package
 
 
 
-async function chatgptConversationMessagesFetch2(messages, onText, onTyping) {
+async function chatgptConversationMessagesFetch2(messages, onConnected, onText, onTyping) {
     //try {
 
     const url = `https://api.openai.com/v1/chat/completions`;
@@ -58,11 +58,14 @@ async function chatgptConversationMessagesFetch2(messages, onText, onTyping) {
     var start = Date.now();
     //async function read() {
 
+
+        onConnected();
+
     while (true) {
         var { value, done } = await reader.read();
 
         var decoded = /*await*/ decoder.decode(value);
-        console.log(decoded);
+        //console.log(decoded);
         const delta = /*await*/ decoded.match(/"delta":\s*({.*?"content":\s*".*?"})/)?.[1]
 
         if (delta) {
@@ -429,7 +432,7 @@ async function chatgptConversationMessagesFetch(messages) {
     return '';
 }
 
-async function chatgptConversation(message, dialog, onText, onTyping) {
+async function chatgptConversation(message, dialog,onConnected, onText, onTyping) {
 
     /*
     var beginMessage = [
@@ -445,7 +448,7 @@ async function chatgptConversation(message, dialog, onText, onTyping) {
     if (typeof dialog === 'undefined') dialog = [];
 
     var messages = beginMessage.concat(dialog, endMessage);
-    return await chatgptConversationMessagesFetch2(messages, onText, onTyping);
+    return await chatgptConversationMessagesFetch2(messages,onConnected, onText, onTyping);
     //return await chatgptConversationMessages(messages);
 }
 
