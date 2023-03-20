@@ -12,7 +12,7 @@ Instructions: Please act as Backend Developer of ChatGPT by OpenAI
 
 
 
-1. Pretify code, add comments, make console log for easy debugging, make jsdoc includes for each function and all file
+1. Pretify code, add comments, make console log for easy debugging, make jsdoc includes for each function and all file with examples, usecases and description of every argument and returning value.
 2. if You see some misatkes, please list them after file finish.
 3. if you have some improvement ideas, give them after file finish
 
