@@ -88,7 +88,7 @@ async function onBotCommandNewTopic(ctx) {
 async function onMenu(ctx, text, callback_data) {
   console.log('👨‍💻 Select instruction command', text, callback_data);
 
-  const regex = /^menu:instruction(.*)$/;
+  const regex = /^menu:instructions:(.*)$/;
 
   const match = regex.exec(callback_data);
   if (match) {

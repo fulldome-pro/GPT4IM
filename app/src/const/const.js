@@ -38,7 +38,7 @@ const MENU = [
 
     {
         "instructions:plain": { emoji: '🤷‍♂️', description: 'Plain (no instructions)', prompt: prompts.plain },
-        "instructions:dan": { emoji: '💪', description: 'DAN (jailbrake)', prompt: prompts.DAN }
+        "instructions:dan": { emoji: '💪', description: 'DAN (jailbrake)', prompt: prompts.dan }
     },
     {
         "instructions:developer": { emoji: '💻', description: 'Developer', prompt: prompts.developer },
