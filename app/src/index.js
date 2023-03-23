@@ -137,6 +137,7 @@ menuKeyboard.forEach(row => {
 
 // Listen for incoming text messages
 bot.on('text', async (ctx) => {
+  console.log('💬 bot.on(text)');
   try {
     await checkSession(ctx);
     if (ctx.chat.type === 'private') {

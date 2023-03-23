@@ -59,17 +59,26 @@ async function chatgptConversationMessagesFetch2(messages, onConnected, onText, 
     //async function read() {
 
 
-        onConnected();
+    await onConnected();
 
     while (true) {
         var { value, done } = await reader.read();
 
-        var decoded = /*await*/ decoder.decode(value);
-        //console.log(decoded);
-        const delta = /*await*/ decoded.match(/"delta":\s*({.*?"content":\s*".*?"})/)?.[1]
+        var decoded = /**/ await decoder.decode(value);
+        console.log("done,decoded",done,decoded);
+        const regex = /"delta":\s*({.*?"content":\s*".*?"})/g; // Add the 'g' flag for global search
+        const decodedMatchAll = [...decoded.matchAll(regex)]; // Use the spread operator to create an array of matches
+        console.log("matchAll", decodedMatchAll);
 
-        if (delta) {
-            const content = /*await*/ JSON.parse(delta).content
+        //const match = /**/ await decoded.match(/"delta":\s*({.*?"content":\s*".*?"})/);
+        //console.log("match",match);
+        //const delta = match?.[1]
+
+        await decodedMatchAll.forEach(async(match) =>  {
+            const delta = match?.[1];
+        //if (delta) {
+            const js = /**/await JSON.parse(delta)
+            const content = js.content;
 
             fullText += content
             //console.log("content:", content);
@@ -84,7 +93,7 @@ async function chatgptConversationMessagesFetch2(messages, onConnected, onText, 
 
 
             //Detects punctuation, if yes, fires onText once per .5 sec
-            if (regex.test(content)) {
+            if (await regex.test(content)) {
                 const now = Date.now();
 
                 if ((now - start) > 2000) delay = 1000;
@@ -94,19 +103,20 @@ async function chatgptConversationMessagesFetch2(messages, onConnected, onText, 
                 if (now - lastFire > delay) {
                     //delay=delay*1.5;
                     lastFire = now
-                    /*await*/ onText(fullText)
+                    /**/ await onText(fullText)
                 }
                 if (now - lastFireTyping > delayTyping) {
                     //delay=delay*1.5;
                     lastFireTyping = now;
-                    /*await*/ onTyping();
+                    /**/ await onTyping();
                 }
             }
         }
+        );
 
         if (done) {
-            /*await*/ onText(fullText);
-            console.log("DONE", value, done);
+            /**/await onText(fullText);
+            console.log("DONE",  done);
             //return value;
             break;
         }
