@@ -159,6 +159,7 @@ bot.on('text', async (ctx) => {
       await ctx.reply(`Oops! Something went wrong(status code ${err.response.status}). Please try again later or try to restart bot using /start command.`);
     }
   }
+  console.log('🚀 FINISH bot.on(text)');
 });
 
 bot.action(/reaction:(.*):(.*)/, async (ctx) => {
