@@ -6,8 +6,9 @@ const feedbackText = `📝 Your feedback will help us improve the quality of the
 
 // Enable command menu
 const COMMANDS = [
-    { command: 'start', description: 'Start the bot' },
-    { command: 'new', description: 'Start new dialog' },
+    { command: 'start', description: 'Start the bot.' },
+    { command: 'new', description: 'Start new dialog. Usage: /new What is life after life?' },
+    { command: 'chat', description: 'Continue dialog. Usage: /chat Can you please repeat?' },
     //{ command: 'translate', description: 'Translate to english next message' },  
     //{ command: 'chats', description: 'Show chats list' },
     //{ command: 'prompts', description: 'Chose special prompt' },  
@@ -47,13 +48,13 @@ const MENU = [
     {
         "instructions:svg": { emoji: '🎨', description: 'SVG creator', prompt: prompts.svg },
     },
-/*
+
     {
         "mode:qa": { emoji: '❓', description: 'Q&A', mode: "qa" },
         "mode:dialog": { emoji: '💬', description: 'Dialog', mode: "dialog" },
-        "mode:internet": { emoji: '🌐', description: 'Internet', mode:"internet" },
+        //"mode:internet": { emoji: '🌐', description: 'Internet', mode:"internet" },
     }
-*/
+
 
 ];
 
@@ -77,7 +78,7 @@ function createKeyboard(menu) {
 //.oneTimeKeyboard(true);
 
 const menuKeyboard = createKeyboard(MENU);
-//  console.log(menuKeyboard);
+// console.log(menuKeyboard);
 
 const instructionsKeyboard = menuKeyboard;
 /*

@@ -63,6 +63,11 @@ bot.command('newtopic', async (ctx) => {
   await onBotCommandNewTopic(ctx);
 });
 
+bot.command('chat', async (ctx) => {
+  console.log('💬 /chat command');
+  await onBotCommandNewTopic(ctx);
+});
+
 bot.command('chatgpt', async (ctx) => {
   console.log('💬 /chatgpt command');
   await onBotCommandNewTopic(ctx);
@@ -96,8 +101,20 @@ async function onMenu(ctx, text, callback_data) {
     console.log(instruction);
     console.log("Instruction prompt:", prompts[instruction]);
     ctx.session.dialog = prompts[instruction];
+    ctx.session.prompt = prompts[instruction];
     //await ctx.answerCbQuery('Instructions set, please write your text!', { show_alert: false }); //cache_time: 300  
     await ctx.reply(`👉👨‍💻💬 Now just type something (${text}):`);
+
+  }
+
+  const regexMode = /^menu:mode:(.*)$/;
+  const matchMode = regexMode.exec(callback_data);
+  if (matchMode) {
+    const mode = matchMode[1].trim();
+    console.log(mode);
+    console.log("Mode:", mode);
+    ctx.session.mode = mode;
+    await ctx.reply(`👉👨‍💻💬 Now just type something (mode:${ctx.session.mode}):`);
 
   }
 
@@ -105,9 +122,9 @@ async function onMenu(ctx, text, callback_data) {
 
 console.log(menuKeyboard);
 menuKeyboard.forEach(row => {
-  console.log(row);
+  //console.log(row);
   for (let key in row) {
-    var button = row[key];
+    const button = row[key];
     console.log(button);
     bot.hears(button.text, ctx => {
       onMenu(ctx, button.text, button.callback_data)
@@ -124,6 +141,7 @@ bot.on('text', async (ctx) => {
     await checkSession(ctx);
     if (ctx.chat.type === 'private') {
       console.log('📝 text received (private)');
+      if (ctx.session.mode=="qa")     ctx.session.dialog = ctx.session.prompt;
       await makeDialog(ctx);
     } else {
       console.log('📝 text received (group)');
@@ -162,4 +180,6 @@ console.log('🚀 VadaVany bot is running');
 
 
 
-require('./const/show');
+//require('./const/show');
+
+
