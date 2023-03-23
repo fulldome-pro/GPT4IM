@@ -18,6 +18,23 @@ const axios = require('axios'); // Importing the axios package
 
 
 
+const fetchWithTimeout = async (url, options, timeout = 30000) => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    const fetchPromise = fetch(url, { ...options, signal });
+    const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => {
+            controller.abort();
+            reject(new Error('Request timed out'));
+        }, timeout)
+    );
+
+    return Promise.race([fetchPromise, timeoutPromise]);
+};
+
+
+
 
 async function chatgptConversationMessagesFetch2(ctx,chat_id,message_id,messages, onConnected, onText, onTyping) {
     //try {
@@ -35,7 +52,7 @@ async function chatgptConversationMessagesFetch2(ctx,chat_id,message_id,messages
         stream: true,
     };
 
-    const res = await fetch(url, {
+    const res = await fetchWithTimeout(url, {
         method: 'POST',
         headers: headers,
         body: JSON.stringify(data)
