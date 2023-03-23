@@ -19,9 +19,9 @@ const axios = require('axios'); // Importing the axios package
 
 
 
-async function chatgptConversationMessagesFetch2(messages, onConnected, onText, onTyping) {
+async function chatgptConversationMessagesFetch2(ctx,chat_id,message_id,messages, onConnected, onText, onTyping) {
     //try {
-
+    console.log('⌛Connecting');
     const url = `https://api.openai.com/v1/chat/completions`;
     const headers = {
         Authorization: `Bearer ${authorization}`,
@@ -58,17 +58,17 @@ async function chatgptConversationMessagesFetch2(messages, onConnected, onText, 
     var start = Date.now();
     //async function read() {
 
-
-    await onConnected();
+    console.log('✍️Connected');
+    await onConnected(ctx,chat_id,message_id,messages);
 
     while (true) {
         var { value, done } = await reader.read();
 
         var decoded = /**/ await decoder.decode(value);
-        console.log("done,decoded",done,decoded);
+        //console.log("done,decoded",done,decoded);
         const regex = /"delta":\s*({.*?"content":\s*".*?"})/g; // Add the 'g' flag for global search
         const decodedMatchAll = [...decoded.matchAll(regex)]; // Use the spread operator to create an array of matches
-        console.log("matchAll", decodedMatchAll);
+        //console.log("matchAll", decodedMatchAll);
 
         //const match = /**/ await decoded.match(/"delta":\s*({.*?"content":\s*".*?"})/);
         //console.log("match",match);
@@ -103,19 +103,19 @@ async function chatgptConversationMessagesFetch2(messages, onConnected, onText, 
                 if (now - lastFire > delay) {
                     //delay=delay*1.5;
                     lastFire = now
-                    /**/ await onText(fullText)
+                    /**/ await onText(ctx,chat_id,message_id,fullText)
                 }
                 if (now - lastFireTyping > delayTyping) {
                     //delay=delay*1.5;
                     lastFireTyping = now;
-                    /**/ await onTyping();
+                    /**/ await onTyping(ctx);
                 }
             }
         }
         );
 
         if (done) {
-            /**/await onText(fullText);
+            ///**/await onText(ctx,chat_id,message_id,fullText);
             console.log("DONE",  done);
             //return value;
             break;
@@ -442,7 +442,7 @@ async function chatgptConversationMessagesFetch(messages) {
     return '';
 }
 
-async function chatgptConversation(message, dialog,onConnected, onText, onTyping) {
+async function chatgptConversation(ctx,chat_id,message_id,message, dialog,onConnected, onText, onTyping) {
 
     /*
     var beginMessage = [
@@ -458,7 +458,7 @@ async function chatgptConversation(message, dialog,onConnected, onText, onTyping
     if (typeof dialog === 'undefined') dialog = [];
 
     var messages = beginMessage.concat(dialog, endMessage);
-    return await chatgptConversationMessagesFetch2(messages,onConnected, onText, onTyping);
+    return await chatgptConversationMessagesFetch2(ctx,chat_id,message_id,messages,onConnected, onText, onTyping);
     //return await chatgptConversationMessages(messages);
 }
 

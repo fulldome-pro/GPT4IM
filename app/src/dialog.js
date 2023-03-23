@@ -41,6 +41,8 @@ async function makeDialog(ctx) {
     // Send the "typing" action to the chat
     //newMessage = await ctx.reply('...');
     newMessage = await ctx.replyWithMarkdown('⌛...');
+    const message_id = newMessage.message_id;
+    const chat_id = newMessage.chat.id;
     //newMessage = await ctx.reply('...',{ reply_markup:  {  parse_mode: "MarkdownV2", inline_keyboard: [reactionsKeyboard]  }});
 
     const reactionsKeyboard = Object.keys(REACTIONS).map(command => ({
@@ -56,10 +58,12 @@ async function makeDialog(ctx) {
     console.log('🤖 Dialog:', dialog);
     var textBefore = "";
     // Call the chatGPT API to generate a response
-    var response = await chatgptConversation(message, dialog, async () => {
-        await ctx.telegram.editMessageText(newMessage.chat.id, newMessage.message_id, null, "✍️...", { parse_mode: 'Markdown', reply_markup: { inline_keyboard: [reactionsKeyboard] } });
+    var response = await chatgptConversation(ctx, chat_id, message_id, message, dialog, async (ctx, chatId, messageId) => {
+        const message_id1 = message_id;
+        await ctx.telegram.editMessageText(chatId, messageId, null, "✍️...", { parse_mode: 'Markdown', reply_markup: { inline_keyboard: [reactionsKeyboard] } });
     },
-        async (text) => {
+        async (ctx, chatId, messageId, text) => {
+            const message_id1 = message_id;
             //TODO: Добавить Поддержка длинных 4096+ симсолов ответов 
             var myText = (text + "\n✍️...");
             myText = await myText.substring(0, 4095); //Не правильно, заглушка!
@@ -71,17 +75,20 @@ async function makeDialog(ctx) {
                     //await
 
 
-                    if (markdownRegex.test(myText))
-                        await ctx.telegram.editMessageText(newMessage.chat.id, newMessage.message_id, null, myText, { parse_mode: 'Markdown', reply_markup: { inline_keyboard: [reactionsKeyboard] } });
-                    else
-                        await ctx.telegram.editMessageText(newMessage.chat.id, newMessage.message_id, null, myText, { reply_markup: { inline_keyboard: [reactionsKeyboard] } });
+                    if (markdownRegex.test(myText)) {
+                        await ctx.telegram.editMessageText(chatId, messageId, null, myText, { parse_mode: 'Markdown', reply_markup: { inline_keyboard: [reactionsKeyboard] } });
+                        textBefore = myText;
+                    }
+                    else {
+                        await ctx.telegram.editMessageText(chatId, messageId, null, myText, { reply_markup: { inline_keyboard: [reactionsKeyboard] } });
+                        textBefore = myText;
+                    }
                 }
             } catch (error) {
                 console.log("Oops. Modify error.", error);
             }
-            textBefore = myText;
 
-        }, async () => {
+        }, async (ctx) => {
             try {
                 await ctx.replyWithChatAction('typing');
             } catch (error) {
@@ -91,16 +98,19 @@ async function makeDialog(ctx) {
 
 
     response = await response.substring(0, 4095); //Не правильно, заглушка!
-    if (textBefore != response) {
-        if (markdownRegex.test(response))
-            await ctx.telegram.editMessageText(newMessage.chat.id, newMessage.message_id, null, response, { parse_mode: 'Markdown', reply_markup: { inline_keyboard: [reactionsKeyboard] } });
-        else
-            await ctx.telegram.editMessageText(newMessage.chat.id, newMessage.message_id, null, response, { reply_markup: { inline_keyboard: [reactionsKeyboard] } });
-    }
+    //if (textBefore != textBefore) {
+    //console.log('🤖 was:', myText);
+    console.log('🤖 Response:', response);
+
+
+    if (markdownRegex.test(response))
+        await ctx.telegram.editMessageText(chat_id, message_id, null, response, { parse_mode: 'Markdown', reply_markup: { inline_keyboard: [reactionsKeyboard] } });
+    else
+        await ctx.telegram.editMessageText(chat_id, message_id, null, response, { reply_markup: { inline_keyboard: [reactionsKeyboard] } });
+    //}
 
     await ctx.replyWithChatAction('cancel')
 
-    console.log('🤖 Response:', response);
 
     var q = { "role": "user", "content": message };
     var a = { "role": "assistant", "content": response };

@@ -137,6 +137,8 @@ menuKeyboard.forEach(row => {
 
 // Listen for incoming text messages
 bot.on('text', async (ctx) => {
+  //return;
+
   console.log('💬 bot.on(text)');
   try {
     await checkSession(ctx);
