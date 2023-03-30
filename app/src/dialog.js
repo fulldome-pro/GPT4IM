@@ -9,17 +9,18 @@ const markdownRegex = /(^|[^*_`])(?:\\*\\*|__|\\*|_)(.+?)(?:\\*\\*|__|\\*|_)([^*
 
 
 async function makeDialog(ctx) {
-    const results = await Promise.all([makeDialogVV(ctx), makeDialogGPT(ctx)]);
+    const text=ctx.message.text;
+    const results = await Promise.all([makeDialogVV(ctx,text), makeDialogGPT(ctx,text)]);
     return results;
 
     //return await makeDialogVV(ctx);
 
 }
 
-async function makeDialogVV(ctx) {
+async function makeDialogVV(ctx,text) {
     //console.log(ctx.session);
     const pre="VV:\n";
-    const message = ctx.message.text;
+    const message = text;
     const chatId = ctx.message.chat.id;
     const messageId = ctx.message.message_id;
 
@@ -145,10 +146,10 @@ async function makeDialogVV(ctx) {
 
 
 
-async function makeDialogGPT(ctx) {
+async function makeDialogGPT(ctx,text) {
     //console.log(ctx.session);
     const pre="GPT3.5:\n";
-    const message = ctx.message.text;
+    const message = text;
     const chatId = ctx.message.chat.id;
     const messageId = ctx.message.message_id;
 
