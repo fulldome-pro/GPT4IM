@@ -3,6 +3,7 @@ const url="http://1.20.225.107:12500/generate";
 //const url = "http://127.0.0.1:5000/generate";
 
 const { fetchWithTimeout } = require('../helper');
+const { getCurrentDateFormatted } = require('../helper');
 
 
 async function guruchatConversation(ctx, chat_id, message_id, message, dialog, onConnected, onText, onTyping) {
@@ -29,7 +30,10 @@ async function guruchatConversation(ctx, chat_id, message_id, message, dialog, o
     };
 
     data = {
-        "instruction": " Please act as Śrīla Bhakti Rakshak Sridhar Dev-Goswami Mahārāja.\n",
+        //"instruction": "Please act as Śrīla Bhakti Rakshak Sridhar Dev-Goswami Mahārāja.\n",
+        "instruction": `You are VedaVany, a large language model trained by 360SoftDevelopment. Answer as concisely as possible.
+        Knowledge cutoff: 2023-03
+        Current date: ${getCurrentDateFormatted()}`,
         "input": message
     };
 
