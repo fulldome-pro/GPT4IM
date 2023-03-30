@@ -2,6 +2,7 @@ const { makeDialog } = require('./dialog.js');
 const { COMMANDS, REACTIONS, INSTRUCTIONS, menuKeyboard, commandsText, reactionsText, prompts } = require('./const/const.js');
 
 async function onBotCommandNewTopicCommon(ctx) {
+    await checkSession(ctx);
     /*TODO
     /new
     Text
