@@ -1,0 +1,1 @@
+screen -S vedadavy-telegrambot -m ./npm_start.sh
