@@ -81,19 +81,6 @@ const menuKeyboard = createKeyboard(MENU);
 // console.log(menuKeyboard);
 
 const instructionsKeyboard = menuKeyboard;
-/*
- 
- 
-const modesKeyboard = Object.keys(MODES).map(instructionKey => ({
-    text: MODES[instructionKey].emoji + " " + MODES[instructionKey].description,
-    callback_data: `instruction:${instructionKey}`
-}));
- 
-const instructionsKeyboard = Object.keys(INSTRUCTIONS).map(instructionKey => ([{
-    text: INSTRUCTIONS[instructionKey].emoji + " " + INSTRUCTIONS[instructionKey].description,
-    callback_data: `instruction:${instructionKey}`
-}]));
-*/
 
 
 const commandsText = COMMANDS.map(cmd => `/${cmd.command} - ${cmd.description}`).join('\n');

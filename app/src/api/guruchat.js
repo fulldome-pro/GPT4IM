@@ -1,0 +1,57 @@
+
+const url="http://1.20.225.107:12500/generate";
+//const url = "http://127.0.0.1:5000/generate";
+
+const { fetchWithTimeout } = require('../helper');
+
+
+async function guruchatConversation(ctx, chat_id, message_id, message, dialog, onConnected, onText, onTyping) {
+
+    /*
+        var beginMessage = [];
+    
+        var endMessage = [
+            { "role": "user", "content": message }
+        ];
+    
+        if (typeof dialog === 'undefined') dialog = [];
+    
+        var messages = beginMessage.concat(dialog, endMessage);
+        return await chatgptConversationMessagesFetch2(ctx,chat_id,message_id,messages,onConnected, onText, onTyping);
+        //return await chatgptConversationMessages(messages);
+        */
+
+
+    const headers = {
+        //Authorization: `Bearer ${authorization}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+    };
+
+    data = {
+        "instruction": " Please act as Śrīla Bhakti Rakshak Sridhar Dev-Goswami Mahārāja.\n",
+        "input": message
+    };
+
+    const res = await fetchWithTimeout(url, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(data)
+    });
+
+    if (!res.ok) {
+        console.log(res);
+        throw new Error(`HTTP error! Status: ${res.status}`);
+    }
+
+    const d = await res.json();
+
+    return d.response;
+}
+
+
+
+// Exporting the function
+module.exports = {
+    guruchatConversation
+};

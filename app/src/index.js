@@ -120,12 +120,11 @@ async function onMenu(ctx, text, callback_data) {
 
 }
 
-console.log(menuKeyboard);
+//Make menu hears functions
 menuKeyboard.forEach(row => {
   //console.log(row);
   for (let key in row) {
     const button = row[key];
-    console.log(button);
     bot.hears(button.text, ctx => {
       onMenu(ctx, button.text, button.callback_data)
     });
@@ -171,6 +170,10 @@ bot.action(/reaction:(.*):(.*)/, async (ctx) => {
   ctx.session.feedback[reactionMessageId] = reactionType;
   await ctx.answerCbQuery('Thank you for feedback!', { show_alert: false }); //cache_time: 300  
 });
+
+
+
+
 
 bot.catch((err, ctx) => {
   console.log(`Ooops, encountered an error for ${ctx.updateType}`, err)

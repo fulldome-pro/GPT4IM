@@ -32,7 +32,23 @@ function splitText(text) {
     return [firstBlock, lastBlock];
   }
 
+  const fetchWithTimeout = async (url, options, timeout = 30000) => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    const fetchPromise = fetch(url, { ...options, signal });
+    const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => {
+            controller.abort();
+            reject(new Error('Request timed out'));
+        }, timeout)
+    );
+
+    return Promise.race([fetchPromise, timeoutPromise]);
+};
+
 module.exports = {
     getCurrentDateFormatted,
+    fetchWithTimeout,
     splitText
 };

@@ -6,6 +6,8 @@ const EventSource = require('eventsource');
 //const fetch = require('node-fetch');
 //const fetch = require('@microsoft/fetch-event-source');
 
+const {fetchWithTimeout} = require('../helper');
+
 
 const authorization = process.env.OPENAPI_AUTHORIZATION; // Storing the authorization token in a variable
 
@@ -18,20 +20,7 @@ const axios = require('axios'); // Importing the axios package
 
 
 
-const fetchWithTimeout = async (url, options, timeout = 30000) => {
-    const controller = new AbortController();
-    const signal = controller.signal;
 
-    const fetchPromise = fetch(url, { ...options, signal });
-    const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => {
-            controller.abort();
-            reject(new Error('Request timed out'));
-        }, timeout)
-    );
-
-    return Promise.race([fetchPromise, timeoutPromise]);
-};
 
 
 
@@ -479,8 +468,7 @@ async function chatgptConversation(ctx,chat_id,message_id,message, dialog,onConn
     //return await chatgptConversationMessages(messages);
 }
 
-// Debugging message with emoji
-console.log("🚀 ChatGPT bot is ready to initiate conversations!");
+
 
 // Exporting the function
 module.exports = {
