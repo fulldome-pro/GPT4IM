@@ -64,7 +64,7 @@ A Instant Massengers 📱 bot (Telegram, Line) 🤖 built on OpenAI GPT-4 to pro
 
 ## 🚀 Community Contribution: Join the GPT4IM Family
 
-Are you excited about GPT4TELEGRAM and want to be a part of our growing community? We encourage you to get involved and help us shape the future of AI-powered communication on Telegram. By contributing to the project, you can gain valuable experience and have a significant impact on this cutting-edge technology.
+Are you excited about GPT4IM and want to be a part of our growing community? We encourage you to get involved and help us shape the future of AI-powered communication on Telegram. By contributing to the project, you can gain valuable experience and have a significant impact on this cutting-edge technology.
 
 ### 🤝 Collaboration Opportunities
 
