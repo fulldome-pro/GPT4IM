@@ -6,8 +6,7 @@ A Instant Massengers 📱 bot (Telegram, Line) 🤖 built on OpenAI GPT-4 to pro
 
 
 ## How to try
-- 🌐 Browser Integration: Use the RoboGPT web browser version, designed to make it easy for non-programmers to create and use their own AI agents.
-- 📱 Messaging Platforms: RoboGPT is available on popular messaging platforms, including:
+- 📱 Messaging Platforms: GPT4IM is available on popular messaging platforms, including:
   - Telegram Bot [@GPT4_telegrambot](https://t.me/roboGPT_telegrambot)
   - Line Bot [@892vpylt](https://line.me/R/ti/p/@892vpylt)
 
