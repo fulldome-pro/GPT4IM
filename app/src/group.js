@@ -25,9 +25,13 @@ async function onBotTextGroup(ctx) {
     //await ctx.reply("group");
 }
 
+async function onBotDonateGroup(ctx) {
+    await ctx.reply('💸 You can support us right there *link*',  { reply_to_message_id: ctx.message.message_id } );
+}
 
 module.exports = {
     onBotStartGroup,
     onBotCommandHelpGroup,
-    onBotTextGroup
+    onBotTextGroup,
+		onBotDonateGroup
 };

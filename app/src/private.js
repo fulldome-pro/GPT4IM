@@ -4,6 +4,7 @@ const { COMMANDS, REACTIONS, INSTRUCTIONS, menuKeyboard,commandsText,reactionsTe
 async function onBotStartPrivate(ctx) {
     await ctx.reply('👋 Welcome to VedaVany.');
     await onBotCommandHelpPrivate(ctx);
+		await onBotDonatePrivate(ctx);
     await onBotCommandNewTopicCommon(ctx);
 }
 
@@ -17,9 +18,12 @@ async function onBotCommandHelpPrivate(ctx) {
     
 }
 
-
+async function onBotDonatePrivate(ctx) {
+	await ctx.reply('💸 You can support us right there *link*');
+}
 
 module.exports = {
     onBotStartPrivate,
     onBotCommandHelpPrivate,
+		onBotDonatePrivate
 };

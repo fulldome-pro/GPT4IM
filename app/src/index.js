@@ -13,13 +13,15 @@ const {
   onBotStartPrivate,
   onBotCommandNewTopicPrivate,
   onBotCommandHelpPrivate,
+	onBotDonatePrivate,
   onBotTextPrivate } = require('./private.js');
 
 const {
   onBotStartGroup,
   onBotCommandNewTopicGroup,
   onBotCommandHelpGroup,
-  onBotTextGroup } = require('./group.js');
+  onBotTextGroup, 
+	onBotDonateGroup} = require('./group.js');
 
 const { onBotCommandNewTopicCommon, checkSession } = require('./common.js');
 
@@ -79,6 +81,15 @@ bot.command('help', async (ctx) => {
     await onBotCommandHelpPrivate(ctx);
   } else {
     await onBotCommandHelpGroup(ctx);
+  }
+});
+
+bot.command('donate', async (ctx) => {
+  console.log('/donate');
+	if (ctx.chat.type === 'private') {
+    await onBotDonatePrivate(ctx);
+  } else {
+    await onBotDonateGroup(ctx);
   }
 });
 
