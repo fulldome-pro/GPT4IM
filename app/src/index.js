@@ -134,12 +134,18 @@ menuKeyboard.forEach(row => {
 
 
 
+
 // Listen for incoming text messages
 bot.on('text', async (ctx) => {
   //return;
-
-  console.log('💬 bot.on(text)');
   try {
+    const path = require('path');
+const photo = {
+  source: path.join(__dirname, 'assets', 'edit.jpeg')
+};
+  const caption = 'Here is your photo!'
+  ctx.replyWithPhoto(photo, { caption })
+  console.log('💬 bot.on(text)');
     await checkSession(ctx);
     if (ctx.chat.type === 'private') {
       console.log('📝 text received (private)');

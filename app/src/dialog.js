@@ -10,7 +10,7 @@ const markdownRegex = /(^|[^*_`])(?:\\*\\*|__|\\*|_)(.+?)(?:\\*\\*|__|\\*|_)([^*
 
 async function makeDialog(ctx) {
     const text=ctx.message.text;
-    const results = await Promise.all([makeDialogVV(ctx,text), makeDialogGPT(ctx,text)]);
+    const results = await Promise.all([/*makeDialogVV(ctx,text),*/ makeDialogGPT(ctx,text)]);
     return results;
 
     //return await makeDialogVV(ctx);
