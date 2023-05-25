@@ -34,7 +34,7 @@ async function onBotCommandNewTopicCommon(ctx) {
             ctx.session.dialog = prompts.default;
         }
         if (ctx.chat.type === 'private') {
-            await ctx.reply(ctx.i18n.t('new_topic_private'), { reply_markup: { parse_mode: "MakrdownV2", keyboard: menuKeyboard, resize_keyboard: true, one_time_keyboard: true } });
+            await ctx.reply('👉👨‍💻💬 Please choose instructions set or just type something:', { reply_markup: { parse_mode: "MakrdownV2", keyboard: menuKeyboard, resize_keyboard: true, one_time_keyboard: true } });
         } else {
             await ctx.reply('💬 New topic started');
         }

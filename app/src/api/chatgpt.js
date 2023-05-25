@@ -9,21 +9,9 @@ const EventSource = require('eventsource');
 const {fetchWithTimeout} = require('../helper');
 
 
-const authorization = process.env.OPENAPI_AUTORIZATION; // Storing the authorization token in a variable
+const authorization = process.env.OPENAPI_AUTHORIZATION; // Storing the authorization token in a variable
 
-let MODEL;
-
-switch (process.env.MODEL_CHANGER) {
-	case '1':
-		MODEL = "gpt-3.5-turbo";
-		break;
-	case '2':
-		MODEL = "gpt-4";
-		break;
-	default:
-		MODEL = "none";
-		break;
-}
+const MODEL = "gpt-3.5-turbo"; //"model": "gpt-4-32k",
 
 const axios = require('axios'); // Importing the axios package
 

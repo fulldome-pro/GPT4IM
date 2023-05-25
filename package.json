@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "telegraf": "^4.12.2",
-    "telegraf-i18n": "^6.6.0"
-  }
-}

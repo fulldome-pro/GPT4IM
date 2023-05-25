@@ -9,23 +9,11 @@ const markdownRegex = /(^|[^*_`])(?:\\*\\*|__|\\*|_)(.+?)(?:\\*\\*|__|\\*|_)([^*
 
 
 async function makeDialog(ctx) {
-	const text=ctx.message.text;
-	let results;
-	switch (process.env.MODEL_CHANGER) {
-		case '1':
-		case '2':
-			results = await Promise.all([makeDialogGPT(ctx,text)]);
-			break;
-		case '3':
-			results = await Promise.all([makeDialogVV(ctx,text)]);
-			break;
-		default:
-			results = null;
-			break;
-	}
-	return results;
+    const text=ctx.message.text;
+    const results = await Promise.all([makeDialogVV(ctx,text), makeDialogGPT(ctx,text)]);
+    return results;
 
-	//return await makeDialogVV(ctx);
+    //return await makeDialogVV(ctx);
 
 }
 
