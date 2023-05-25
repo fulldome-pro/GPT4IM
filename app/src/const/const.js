@@ -16,6 +16,8 @@ const COMMANDS = [
     //{ command: 'useinternet_always', description: 'Use internet always for this chat' },  
     //{ command: 'useinternet_never', description: 'Useinternet never for this chat' },  
     { command: 'help', description: 'Get help' },
+		{ command: 'donate', description: 'Get link for some donation.' },
+		{ command: 'language', description: 'Change the language.' },
 ];
 
 const REACTIONS = {

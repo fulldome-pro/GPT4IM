@@ -1,4 +1,6 @@
-const { Telegraf, Markup } = require('telegraf');
+const { Telegraf } = require('telegraf');
+const TelegrafI18n = require('telegraf-i18n');
+const path = require('path');
 const { Keyboard } = require('telegram-keyboard')
 const LocalSession = require('telegraf-session-local')
 const fs = require('fs');
@@ -7,19 +9,30 @@ const fs = require('fs');
 const dotenv = require('dotenv');
 dotenv.config();
 
-const { COMMANDS, REACTIONS, INSTRUCTIONS, MENU, menuKeyboard, commandsText, reactionsText,prompts } = require('./const/const.js');
+const i18n = new TelegrafI18n({
+  defaultLanguage: 'en',
+  allowMissing: false, // Default true
+  directory: path.resolve(__dirname, 'locales'),
+	useSession: true,
+  defaultLanguageOnMissing: true // implies allowMissing = true
+})
+
+const { COMMANDS, REACTIONS, INSTRUCTIONS, MENU, menuKeyboard, commandsText, reactionsText, prompts } = require('./const/const.js');
 
 const {
   onBotStartPrivate,
   onBotCommandNewTopicPrivate,
   onBotCommandHelpPrivate,
-  onBotTextPrivate } = require('./private.js');
+	onBotDonatePrivate,
+  onBotTextPrivate, 
+	onBotChangeLanguagePrivate} = require('./private.js');
 
 const {
   onBotStartGroup,
   onBotCommandNewTopicGroup,
   onBotCommandHelpGroup,
-  onBotTextGroup } = require('./group.js');
+  onBotTextGroup, 
+	onBotDonateGroup} = require('./group.js');
 
 const { onBotCommandNewTopicCommon, checkSession } = require('./common.js');
 
@@ -38,8 +51,10 @@ const bot = new Telegraf(telegramBotToken);
 // Set up local session middleware to store user data
 const sessionPath = './data/sessions/session.json';
 const session = new LocalSession();
-bot.use((new LocalSession({ database: sessionPath })).middleware())
 
+bot.use(i18n)
+bot.use((new LocalSession({ database: sessionPath })).middleware())
+bot.use(i18n.middleware())
 
 bot.telegram.setMyCommands(COMMANDS);
 
@@ -82,6 +97,23 @@ bot.command('help', async (ctx) => {
   }
 });
 
+bot.command('donate', async (ctx) => {
+  console.log('/donate');
+	if (ctx.chat.type === 'private') {
+    await onBotDonatePrivate(ctx);
+  } else {
+    await onBotDonateGroup(ctx);
+  }
+});
+
+bot.command('language', async (ctx) => {
+  console.log('/language');
+	if (ctx.chat.type === 'private') {
+    await onBotChangeLanguagePrivate(ctx);
+  } else {
+    await onBotChangeLanguageGroup(ctx);
+  }
+});
 
 
 async function onBotCommandNewTopic(ctx) {
@@ -103,8 +135,7 @@ async function onMenu(ctx, text, callback_data) {
     ctx.session.dialog = prompts[instruction];
     ctx.session.prompt = prompts[instruction];
     //await ctx.answerCbQuery('Instructions set, please write your text!', { show_alert: false }); //cache_time: 300  
-    await ctx.reply(`👉👨‍💻💬 Now just type something (${text}):`);
-
+    await ctx.reply(`${ctx.i18n.t('type_something').slice(0, ctx.i18n.t('type_something').length - 1)} (${text}):`);
   }
 
   const regexMode = /^menu:mode:(.*)$/;
@@ -134,12 +165,18 @@ menuKeyboard.forEach(row => {
 
 
 
+
 // Listen for incoming text messages
 bot.on('text', async (ctx) => {
   //return;
-
-  console.log('💬 bot.on(text)');
   try {
+    const path = require('path');
+const photo = {
+  source: path.join(__dirname, 'assets', 'edit.jpeg')
+};
+  const caption = 'Here is your photo!'
+  ctx.replyWithPhoto(photo, { caption })
+  console.log('💬 bot.on(text)');
     await checkSession(ctx);
     if (ctx.chat.type === 'private') {
       console.log('📝 text received (private)');
@@ -171,6 +208,13 @@ bot.action(/reaction:(.*):(.*)/, async (ctx) => {
   await ctx.answerCbQuery('Thank you for feedback!', { show_alert: false }); //cache_time: 300  
 });
 
+bot.action(/change:language:(.*)/, async (ctx) => {
+  const language = ctx.match[1];
+  ctx.i18n.locale(language)
+	//ctx.reply(ctx.i18n.t('language_changed'))
+	await ctx.answerCbQuery(ctx.i18n.t('language_changed'), { show_alert: false });
+	console.log('Language changed to ' + language);
+});
 
 
 
